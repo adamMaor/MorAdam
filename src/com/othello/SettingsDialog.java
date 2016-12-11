@@ -13,6 +13,7 @@ public class SettingsDialog extends JDialog {
     private JButton buttonCancel;
     private JComboBox whiteCombo;
     private JSpinner depthSpinner;
+    private JSpinner delaySpinner;
     private JComboBox blackCombo;
     private JComboBox firstMoveCombo;
     private JTextField filePathField;
@@ -34,12 +35,19 @@ public class SettingsDialog extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        SpinnerModel model = new SpinnerNumberModel(4, 1, 10, 1);
-        depthSpinner.setModel(model);
+        SpinnerModel depthModel = new SpinnerNumberModel(4, 1, 10, 1);
+        depthSpinner.setModel(depthModel);
+
+        SpinnerModel DelayModel = new SpinnerNumberModel(250, 0, 1000, 50);
+        delaySpinner.setModel(DelayModel);
 
         JComponent editor = depthSpinner.getEditor();
         JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor)editor;
         spinnerEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
+
+        JComponent editor2 = delaySpinner.getEditor();
+        JSpinner.DefaultEditor delayEditor = (JSpinner.DefaultEditor)editor2;
+        delayEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -91,6 +99,7 @@ public class SettingsDialog extends JDialog {
         byte whitePlayerType = (byte)whiteCombo.getSelectedIndex();
         byte blackPlayerType = (byte)blackCombo.getSelectedIndex();
         int depth = (Integer) depthSpinner.getValue();
+        int delayTime = (Integer) delaySpinner.getValue();
         String filePath = filePathField.getText();
         if (filePath.isEmpty() || Files.exists(Paths.get(filePath)) == false)
         {
@@ -98,9 +107,9 @@ public class SettingsDialog extends JDialog {
             return;
         }
 
-        board.init(whitePlayerType, blackPlayerType);
         parser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        worker.init(board, parser, whitePlayerType, blackPlayerType, depth);
+        worker.init(board, parser, whitePlayerType, blackPlayerType, depth, delayTime);
+        board.init(worker, whitePlayerType, blackPlayerType);
         dispose();
     }
 
@@ -110,4 +119,5 @@ public class SettingsDialog extends JDialog {
         System.exit(0);
 
     }
+
 }
