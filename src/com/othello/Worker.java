@@ -9,22 +9,28 @@ import java.util.Random;
  * Created by Adam on 09/12/2016.
  */
 public class Worker {
-
+    public static ReversiBoardState currentState = null;
     private byte whitePlayer = 0, blackPlayer = 0;
     private int depth = 0;
+    private GameBoard board = null;
+    private FileParser parser = null;
 
-    public void init(byte whitePlayerType, byte blackPlayerType, int depth) {
+    public void init(GameBoard board, FileParser parser, byte whitePlayerType, byte blackPlayerType, int depth) {
         this.whitePlayer = whitePlayerType;
         this.blackPlayer = blackPlayerType;
         this.depth = depth;
+        this.currentState = parser.getNextState();
+        this.board = board;
+        this.parser = parser;
+        board.repaintBoard(currentState);
     }
 
-    public ReversiBoardState getBestMove(ReversiBoardState currentState) {
+    public void getBestMove(ReversiBoardState currentState) {
         ArrayList<byte[][]> potentialMoves = getAvailableMoves(currentState);
         Random rand = new Random();
         byte[][] selectedMove = potentialMoves.get(rand.nextInt(potentialMoves.size() - 1));
-        ReversiBoardState nextState = new ReversiBoardState(selectedMove, !currentState.bIsBlackMove);
-        return nextState;
+        currentState = new ReversiBoardState(selectedMove, !currentState.bIsBlackMove);
+        board.repaintBoard(currentState);
     }
 
     //create a counter method
@@ -50,6 +56,16 @@ public class Worker {
             }
         }
         return availableMoves;
+    }
+
+    public void checkHumanMove (int row, int col) {
+        byte[][] optionalBoard = deepCopyMatrix(currentState.boardStateBeforeMove);
+        checkMoves(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove, optionalBoard);
+        if (!(Arrays.deepEquals(optionalBoard,currentState.boardStateBeforeMove ))) {
+            currentState.boardStateBeforeMove = optionalBoard;
+            currentState.bIsBlackMove = !(currentState.bIsBlackMove);
+            board.repaintBoard(currentState);
+        }
     }
 
     public static void checkMoves(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
@@ -87,13 +103,7 @@ public class Worker {
         }
         return result;
     }
-//
-//    public static byte opposite(byte currentPlayer) {
-//
-//        byte oppositePlayer = (byte)(currentPlayer == 1 ? 2:1);
-//
-//        return oppositePlayer;
-//    }
+
 
 
 
