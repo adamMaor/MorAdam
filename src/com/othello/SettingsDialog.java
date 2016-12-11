@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Clock;
 
 public class SettingsDialog extends JDialog {
     private JPanel contentPane;
@@ -18,6 +17,7 @@ public class SettingsDialog extends JDialog {
     private JComboBox firstMoveCombo;
     private JTextField filePathField;
     private JButton generateFileButton;
+    private JCheckBox createdByMeCheckBox;
 
     private static FileParser parser;
     private static Worker worker;
@@ -30,8 +30,16 @@ public class SettingsDialog extends JDialog {
         this.parser = parser;
 
         setContentPane(contentPane);
+        setTitle("Set your Reversi Game Up");
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        SpinnerModel model = new SpinnerNumberModel(4, 1, 10, 1);
+        depthSpinner.setModel(model);
+
+        JComponent editor = depthSpinner.getEditor();
+        JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor)editor;
+        spinnerEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -39,8 +47,7 @@ public class SettingsDialog extends JDialog {
             }
         });
 
-
-// call onCancel() when cross is clicked
+        // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -48,7 +55,7 @@ public class SettingsDialog extends JDialog {
             }
         });
 
-// call onCancel() on ESCAPE
+        // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
@@ -74,23 +81,33 @@ public class SettingsDialog extends JDialog {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        createdByMeCheckBox.setSelected(true);
         return filePath;
     }
 
     private void onOK() {
-        boolean bIsFirstMoveBlack = firstMoveCombo.getSelectedIndex() == 0;
+        boolean bIsFirstMoveBlack = firstMoveCombo.getSelectedIndex() == 1;
+        boolean bIsCreatedHere = createdByMeCheckBox.isSelected();
         byte whitePlayerType = (byte)whiteCombo.getSelectedIndex();
         byte blackPlayerType = (byte)blackCombo.getSelectedIndex();
         int depth = (Integer) depthSpinner.getValue();
         String filePath = filePathField.getText();
+        if (filePath.isEmpty() || Files.exists(Paths.get(filePath)) == false)
+        {
+            JOptionPane.showMessageDialog(null, "You Must Enter A shared File !!!!");
+            return;
+        }
 
-        System.out.print("your values: " + bIsFirstMoveBlack + whitePlayerType + blackPlayerType + depth + filePath);
-
+        worker.init(whitePlayerType, blackPlayerType, depth);
+        parser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
+        board.init(whitePlayerType, blackPlayerType, parser.getNextState());
         dispose();
     }
 
     private void onCancel() {
 // add your code here if necessary
         dispose();
+        System.exit(0);
+
     }
 }
