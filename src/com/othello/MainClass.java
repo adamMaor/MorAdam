@@ -26,8 +26,6 @@ public class MainClass {
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
 
-
-
         JFrame frame = new JFrame("Reversi");
         frame.setMaximumSize(new Dimension(600,600));
         frame.setContentPane(board.mainPanel());
@@ -37,7 +35,6 @@ public class MainClass {
         frame.setVisible(true);
 
 
-        ReversiBoardState nextMove = worker.getBestMove(parser.getNextState());
-        board.repaintBoard(nextMove);
+        worker.start();
     }
 }

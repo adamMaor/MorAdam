@@ -49,7 +49,8 @@ public class GameBoard {
     public void repaintBoard(ReversiBoardState boardState) {
         currentBlack = 0;
         currentWhite = 0;
-        setCurrentPlayerIndicator(boardState.bIsBlackMove);
+        bCurrentPlayerIsBlack = boardState.bIsBlackMove;
+        setCurrentPlayerIndicator(bCurrentPlayerIsBlack);
         byte[][] boardArray = boardState.boardStateBeforeMove;
         for (int i = 0; i < ReversiConstants.boardHeight; i++){
             for (int j = 0; j < ReversiConstants.boardWidth; j++) {
@@ -92,6 +93,14 @@ public class GameBoard {
         for (int i = 0; i < ReversiConstants.boardHeight; i++){
             for (int j = 0; j < ReversiConstants.boardWidth; j++) {
                 CirclePanel guiObject = new CirclePanel();
+                final int finalI = i;
+                final int finalJ = j;
+                guiObject.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        guiObjectClicked(finalI, finalJ);
+                    }
+                });
                 boardGuiArray[i][j] = guiObject;
                 boardPanel.add(guiObject);
 
@@ -102,15 +111,21 @@ public class GameBoard {
         currentColorPanel.add(currentColorCirclePanel);
     }
 
+    public void guiObjectClicked(int row, int col){
+        if ((blackPlayerType.equals("Human") && bCurrentPlayerIsBlack) ||  (whitePlayerType.equals("Human") && !bCurrentPlayerIsBlack)) {
+            if (boardGuiArray[row][col].getColor() == ReversiConstants.reversiGreen) {
+//            worker.checkHumanMove(row, col);
+            }
+        }
+    }
+
     public Container mainPanel() {
         return mainPanel;
     }
 
-    public void init(byte whitePlayerType, byte blackPlayerType, ReversiBoardState boardState) {
+    public void init(byte whitePlayerType, byte blackPlayerType) {
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
-        bCurrentPlayerIsBlack = boardState.bIsBlackMove;
-        repaintBoard(boardState);
     }
 
     private static class CirclePanel extends JPanel {
@@ -119,26 +134,15 @@ public class GameBoard {
             this.setForeground(ReversiConstants.reversiGreen);
             this.setBackground(ReversiConstants.reversiGreen);
             this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            this.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    CirclePanel.this.update();
-                }
-            });
-        }
-        // this is only for demo session - no logic here - need to create logic
-        public void update() {
-            Color colorToSet = Color.black;
-            if (this.getForeground() == Color.black) {
-                colorToSet = Color.white;
-            }
-            setColor(colorToSet);
 
         }
 
         public void setColor(Color color) {
             this.setForeground(color);
+        }
+
+        public Color getColor() {
+            return this.getForeground();
         }
 
         @Override
