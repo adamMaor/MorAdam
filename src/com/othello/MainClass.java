@@ -2,7 +2,6 @@ package com.othello;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Created by Adam on 09/12/2016.
@@ -34,7 +33,6 @@ public class MainClass {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-
-        worker.start();
+        worker.generateMove();
     }
 }

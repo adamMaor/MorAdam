@@ -26,6 +26,7 @@ public class GameBoard {
     private String blackPlayerType = "Human";
     private String whitePlayerType = "Human";
     private boolean bCurrentPlayerIsBlack = true;
+    private Worker worker = null;
 
     public GameBoard() {
         boardGuiArray = new CirclePanel[ReversiConstants.boardHeight][ReversiConstants.boardWidth];
@@ -114,7 +115,7 @@ public class GameBoard {
     public void guiObjectClicked(int row, int col){
         if ((blackPlayerType.equals("Human") && bCurrentPlayerIsBlack) ||  (whitePlayerType.equals("Human") && !bCurrentPlayerIsBlack)) {
             if (boardGuiArray[row][col].getColor() == ReversiConstants.reversiGreen) {
-//            worker.checkHumanMove(row, col);
+                worker.getHumanMove(row, col);
             }
         }
     }
@@ -123,9 +124,16 @@ public class GameBoard {
         return mainPanel;
     }
 
-    public void init(byte whitePlayerType, byte blackPlayerType) {
+    public void init(Worker worker, byte whitePlayerType, byte blackPlayerType) {
+        this.worker = worker;
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
+    }
+
+    public void gameIsOver() {
+        String strRes = "Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite;
+        JOptionPane.showMessageDialog(null, "Game Is Over !!! \n" + strRes);
+        System.exit(0);
     }
 
     private static class CirclePanel extends JPanel {

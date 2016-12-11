@@ -1,8 +1,10 @@
 package com.othello;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -10,31 +12,65 @@ import java.util.Random;
  */
 public class Worker {
     public static ReversiBoardState currentState = null;
-    private byte whitePlayer = 0, blackPlayer = 0;
+    private byte whitePlayerType = 0, blackPlayerType = 0;
     private int depth = 0;
+    private int delayTime = 250;
     private GameBoard board = null;
     private FileParser parser = null;
 
-    public void start() {
-        
+    public void generateMove() {
+
+        if (getAvailableMoves(currentState).size() == 0)
+        {
+            ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
+            if (getAvailableMoves(nextState).size() == 0)
+            {
+                board.gameIsOver();
+            }
+        }
+
+        if ( (currentState.bIsBlackMove && blackPlayerType == 1) || (!currentState.bIsBlackMove && whitePlayerType == 1) ) {
+            if (getPCMove() == false) {
+                if ((!currentState.bIsBlackMove && blackPlayerType == 1) || (currentState.bIsBlackMove && whitePlayerType == 1)) {
+                    currentState.bIsBlackMove = !currentState.bIsBlackMove;
+                    getPCMove();
+                }
+            }
+            generateMove();
+        }
+        // now check for other pc logic
+
+        // if non then waiting for user (Human) input
     }
 
-    public void init(GameBoard board, FileParser parser, byte whitePlayerType, byte blackPlayerType, int depth) {
-        this.whitePlayer = whitePlayerType;
-        this.blackPlayer = blackPlayerType;
+    public void init(GameBoard board, FileParser parser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime) {
+        this.whitePlayerType = whitePlayerType;
+        this.blackPlayerType = blackPlayerType;
         this.depth = depth;
         this.currentState = parser.getNextState();
         this.board = board;
         this.parser = parser;
+        this.delayTime = delayTime;
         board.repaintBoard(currentState);
     }
 
-    public void getBestMove(ReversiBoardState currentState) {
+    private boolean getPCMove() {
         ArrayList<byte[][]> potentialMoves = getAvailableMoves(currentState);
+        if (potentialMoves.size() == 0) {
+            // no legal moves
+            return false;
+        }
+        try {
+            Thread.sleep(delayTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Random rand = new Random();
-        byte[][] selectedMove = potentialMoves.get(rand.nextInt(potentialMoves.size() - 1));
+        byte[][] selectedMove = potentialMoves.get(rand.nextInt(potentialMoves.size()));
         currentState = new ReversiBoardState(selectedMove, !currentState.bIsBlackMove);
         board.repaintBoard(currentState);
+        parser.writeNextState(currentState);
+        return true;
     }
 
     //create a counter method
@@ -62,13 +98,28 @@ public class Worker {
         return availableMoves;
     }
 
-    public void checkHumanMove (int row, int col) {
+    /**
+     * Called when GUI gets click from user on an empty spot on his turn
+     * @param row the row on the board
+     * @param col the column on the board
+     */
+    public void getHumanMove(int row, int col) {
         byte[][] optionalBoard = deepCopyMatrix(currentState.boardStateBeforeMove);
         checkMoves(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove, optionalBoard);
         if (!(Arrays.deepEquals(optionalBoard,currentState.boardStateBeforeMove ))) {
             currentState.boardStateBeforeMove = optionalBoard;
             currentState.bIsBlackMove = !(currentState.bIsBlackMove);
             board.repaintBoard(currentState);
+            parser.writeNextState(currentState);
+            Timer timer = new Timer(25, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    generateMove();
+                }
+            });
+            timer.start();
+
+            ;
         }
     }
 

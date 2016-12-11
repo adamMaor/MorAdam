@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,8 +87,10 @@ public class FileParser {
                 j += seqLen;
             }
         }
+        strLine += "end\n";
         try {
-            Files.write(sharedFile, strLine.getBytes());
+            Files.write(sharedFile, strLine.getBytes(), StandardOpenOption.APPEND);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
