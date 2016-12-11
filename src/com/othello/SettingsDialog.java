@@ -98,9 +98,9 @@ public class SettingsDialog extends JDialog {
             return;
         }
 
-        worker.init(whitePlayerType, blackPlayerType, depth);
         parser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        board.init(whitePlayerType, blackPlayerType, parser.getNextState());
+        board.init(whitePlayerType, blackPlayerType);
+        worker.init(board,parser, whitePlayerType, blackPlayerType, depth);
         dispose();
     }
 
