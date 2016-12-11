@@ -100,7 +100,7 @@ public class SettingsDialog extends JDialog {
 
         board.init(whitePlayerType, blackPlayerType);
         parser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        worker.init(whitePlayerType, blackPlayerType, depth);
+        worker.init(board, parser, whitePlayerType, blackPlayerType, depth);
         dispose();
     }
 

@@ -15,6 +15,10 @@ public class Worker {
     private GameBoard board = null;
     private FileParser parser = null;
 
+    public void start() {
+        
+    }
+
     public void init(GameBoard board, FileParser parser, byte whitePlayerType, byte blackPlayerType, int depth) {
         this.whitePlayer = whitePlayerType;
         this.blackPlayer = blackPlayerType;
