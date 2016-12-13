@@ -130,7 +130,7 @@ public class GameBoard {
     public void gameIsOver() {
         String strRes = "Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite;
         JOptionPane.showMessageDialog(null, "Game Is Over !!! \n" + strRes);
-        System.exit(0);
+
     }
 
     private static class CirclePanel extends JPanel {
@@ -170,7 +170,7 @@ public class GameBoard {
         }
 
         public Color getColor() {
-            return this.getForeground();
+            return mainColor;
         }
 
         @Override

@@ -18,26 +18,6 @@ public class Worker {
     private GameBoard board = null;
     private FileParser parser = null;
 
-    public void generateMove() {
-
-        if (gameIsOver(currentState) == true) {
-            board.gameIsOver();
-            return;
-        }
-        if ( (currentState.bIsBlackMove && blackPlayerType == 1) || (!currentState.bIsBlackMove && whitePlayerType == 1) ) {
-            if (getPCMove() == false) {
-                if ((!currentState.bIsBlackMove && blackPlayerType == 1) || (currentState.bIsBlackMove && whitePlayerType == 1)) {
-                    currentState.bIsBlackMove = !currentState.bIsBlackMove;
-                    getPCMove();
-                }
-            }
-            generateMove();
-        }
-        // now check for other pc logic
-
-        // if non then waiting for user (Human) input
-    }
-
     public void init(GameBoard board, FileParser parser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime) {
         this.whitePlayerType = whitePlayerType;
         this.blackPlayerType = blackPlayerType;
@@ -49,46 +29,21 @@ public class Worker {
         board.repaintBoard(currentState);
     }
 
-    private boolean getPCMove() {
-        ArrayList<byte[][]> potentialMoves = getAvailableMoves(currentState);
-        if (potentialMoves.size() == 0) {
-            // no legal moves
-            return false;
-        }
-        try {
-            Thread.sleep(delayTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Random rand = new Random();
-        byte[][] selectedMove = potentialMoves.get(rand.nextInt(potentialMoves.size()));
-        currentState = new ReversiBoardState(selectedMove, !currentState.bIsBlackMove);
-        board.repaintBoard(currentState);
-        parser.writeNextState(currentState);
-        return true;
-    }
-
-    //create a counter method
-
-
-    private ArrayList<byte[][]> getAvailableMoves(ReversiBoardState currentState) {
-        byte[][] currentBoard = currentState.boardStateBeforeMove;
-        boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
-        byte[][] optionalBoard = deepCopyMatrix(currentBoard);
-        ArrayList<byte[][]> availableMoves = new ArrayList<byte[][]>();
-        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
-            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
-                if (currentBoard[i][j] == 0) {
-                    checkMoves(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
+    public void generateMove() {
+        if ( (currentState.bIsBlackMove && blackPlayerType == 1) || (!currentState.bIsBlackMove && whitePlayerType == 1) ) {
+            if (getPCMove() == false) {
+                if ((!currentState.bIsBlackMove && blackPlayerType == 1) || (currentState.bIsBlackMove && whitePlayerType == 1)) {
+                    currentState.bIsBlackMove = !currentState.bIsBlackMove;
+                    getPCMove();
+                    return;
                 }
-                if (!(Arrays.deepEquals(optionalBoard, currentBoard))) {
-                    availableMoves.add(optionalBoard);
-                    optionalBoard = deepCopyMatrix(currentBoard);
-                }
-
+            }
+            if (gameIsOver() ==false) {
+                generateMove();
             }
         }
-        return availableMoves;
+        // now check for other pc logic
+        // if non then waiting for user (Human) input
     }
 
     /**
@@ -104,14 +59,55 @@ public class Worker {
             currentState.bIsBlackMove = !(currentState.bIsBlackMove);
             board.repaintBoard(currentState);
             parser.writeNextState(currentState);
-            Timer timer = new Timer(25, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    generateMove();
-                }
-            });
-            timer.start();
+            if (validateCurrentMove() == true) {
+                Timer timer = new Timer(30, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        generateMove();
+                    }
+                });
+                timer.start();
+            }
         }
+    }
+
+    private boolean getPCMove() {
+        ArrayList<byte[][]> potentialMoves = getAvailableMoves(currentState);
+        if (potentialMoves.size() == 0) {
+            // no legal moves
+            return false;
+        }
+        try {
+            Thread.sleep(delayTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Random rand = new Random();
+        byte[][] selectedMove = potentialMoves.get(rand.nextInt(potentialMoves.size()));
+        currentState.boardStateBeforeMove = selectedMove;
+        currentState.bIsBlackMove = !currentState.bIsBlackMove;
+        board.repaintBoard(currentState);
+        parser.writeNextState(currentState);
+        return validateCurrentMove();
+    }
+
+    private ArrayList<byte[][]> getAvailableMoves(ReversiBoardState currentState) {
+        byte[][] currentBoard = currentState.boardStateBeforeMove;
+        boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
+        byte[][] optionalBoard = deepCopyMatrix(currentBoard);
+        ArrayList<byte[][]> availableMoves = new ArrayList<byte[][]>();
+        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
+                if (currentBoard[i][j] == 0) {
+                    checkMoves(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
+                }
+                if (!(Arrays.deepEquals(optionalBoard, currentBoard))) {
+                    availableMoves.add(optionalBoard);
+                    optionalBoard = deepCopyMatrix(currentBoard);
+                }
+            }
+        }
+        return availableMoves;
     }
 
     /**
@@ -158,17 +154,18 @@ public class Worker {
         return result;
     }
 
-    private boolean gameIsOver(ReversiBoardState currentState){
-        int count = 0;
-        boolean gameIsOver = false;
-        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
-            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
-                if (currentState.boardStateBeforeMove[i][j] != 0) {
-                    count++;
-                }
-            }
+    private boolean validateCurrentMove() {
+        if (gameIsOver() == true) {
+            board.gameIsOver();
+            System.exit(0);
+            return false;
         }
-        if (count == ReversiConstants.boardSquare) {
+        return true;
+    }
+
+    private boolean gameIsOver(){
+        boolean gameIsOver = false;
+        if (sumAllBoard() == ReversiConstants.boardSquare) {
             gameIsOver = true;
         } else if (getAvailableMoves(currentState).size() == 0) {
             ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
