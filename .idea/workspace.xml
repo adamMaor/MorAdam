@@ -5,18 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00df2172-e58c-414d-a0c3-c01c40dd7892" name="Default" comment="">
+      <change type="DELETED" beforePath="C:\Users\Adam\Documents\GitHub\Othello\out\production\Othello\com\othello\ReversiConstants$Directions.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$1.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$2.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$2.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$3.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$3.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$CirclePanel.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard$CirclePanel.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/GameBoard.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/ReversiConstants$Directions.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/ReversiConstants$Directions.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/FileParser.java" afterPath="$PROJECT_DIR$/src/com/othello/FileParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/ReversiConstants.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/ReversiConstants.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Othello/com/othello/Worker.class" afterPath="$PROJECT_DIR$/out/production/Othello/com/othello/Worker.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/GameBoard.form" afterPath="$PROJECT_DIR$/src/com/othello/GameBoard.form" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/GameBoard.java" afterPath="$PROJECT_DIR$/src/com/othello/GameBoard.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/MainClass.java" afterPath="$PROJECT_DIR$/src/com/othello/MainClass.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/ReversiConstants.java" afterPath="$PROJECT_DIR$/src/com/othello/ReversiConstants.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/SettingsDialog.form" afterPath="$PROJECT_DIR$/src/com/othello/SettingsDialog.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/SettingsDialog.java" afterPath="$PROJECT_DIR$/src/com/othello/SettingsDialog.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/othello/Worker.java" afterPath="$PROJECT_DIR$/src/com/othello/Worker.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reversiComFile.txt" afterPath="$PROJECT_DIR$/reversiComFile.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -52,14 +51,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GameBoard.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GameBoard.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/othello/GameBoard.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="564" max-vertical-offset="2482">
-              <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
+            <state vertical-scroll-proportion="-0.28549618" vertical-offset="663" max-vertical-offset="3128">
+              <caret line="33" column="52" selection-start-line="33" selection-start-column="52" selection-end-line="33" selection-end-column="52" />
               <folding>
                 <element signature="docComment;class#GameBoard#0" expanded="false" />
-                <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -68,11 +66,9 @@
       <file leaf-file-name="MainClass.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/othello/MainClass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
+            <state vertical-scroll-proportion="0.0" vertical-offset="442" max-vertical-offset="748">
               <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -80,12 +76,9 @@
       <file leaf-file-name="Container.java" pinned="false" current-in-tab="false">
         <entry file="jar://C:/Program Files/Java/jdk1.8.0_91/src.zip!/java/awt/Container.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="17360" max-vertical-offset="82654">
+            <state vertical-scroll-proportion="0.0" vertical-offset="17326" max-vertical-offset="82620">
               <caret line="1096" column="0" selection-start-line="1096" selection-start-column="0" selection-end-line="1096" selection-end-column="0" />
-              <folding>
-                <element signature="e#37566#37567#0" expanded="true" />
-                <element signature="e#37612#37613#0" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -100,7 +93,7 @@
       <file leaf-file-name="SettingsDialog.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/othello/SettingsDialog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="858" max-vertical-offset="1853">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1198" max-vertical-offset="1853">
               <caret line="101" column="46" selection-start-line="101" selection-start-column="46" selection-end-line="101" selection-end-column="46" />
               <folding />
             </state>
@@ -110,22 +103,20 @@
       <file leaf-file-name="FileParser.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/othello/FileParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1921">
+            <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="1921">
               <caret line="7" column="27" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Worker.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Worker.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/othello/Worker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.46717557" vertical-offset="204" max-vertical-offset="2924">
-              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="83" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2737">
+              <caret line="157" column="5" selection-start-line="157" selection-start-column="5" selection-end-line="157" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4590#4767#0" expanded="true" />
-                <element signature="e#4766#4767#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -134,8 +125,8 @@
       <file leaf-file-name="ReversiConstants.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/othello/ReversiConstants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-              <caret line="12" column="41" selection-start-line="12" selection-start-column="41" selection-end-line="12" selection-end-column="41" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="442">
+              <caret line="15" column="59" selection-start-line="15" selection-start-column="59" selection-end-line="15" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -163,14 +154,14 @@
         <option value="$PROJECT_DIR$/src/com/othello/ReversiMove.java" />
         <option value="$PROJECT_DIR$/src/com/othello/List.java" />
         <option value="$PROJECT_DIR$/src/com/othello/ReversiBoardState.java" />
-        <option value="$PROJECT_DIR$/src/com/othello/GameBoard.form" />
         <option value="$PROJECT_DIR$/src/com/othello/FileParser.java" />
         <option value="$PROJECT_DIR$/src/com/othello/MainClass.java" />
-        <option value="$PROJECT_DIR$/src/com/othello/ReversiConstants.java" />
         <option value="$PROJECT_DIR$/src/com/othello/SettingsDialog.form" />
-        <option value="$PROJECT_DIR$/src/com/othello/GameBoard.java" />
         <option value="$PROJECT_DIR$/src/com/othello/SettingsDialog.java" />
+        <option value="$PROJECT_DIR$/src/com/othello/GameBoard.form" />
+        <option value="$PROJECT_DIR$/src/com/othello/ReversiConstants.java" />
         <option value="$PROJECT_DIR$/src/com/othello/Worker.java" />
+        <option value="$PROJECT_DIR$/src/com/othello/GameBoard.java" />
       </list>
     </option>
   </component>
@@ -208,7 +199,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -269,7 +260,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -541,6 +532,9 @@
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" working-dir="">
+      <method />
+    </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
       <module name="" />
       <option name="MAIN_CLASS_NAME" />
@@ -604,12 +598,14 @@
       <workItem from="1481442604338" duration="10890000" />
       <workItem from="1481457538469" duration="14608000" />
       <workItem from="1481472601471" duration="79000" />
-      <workItem from="1481472730907" duration="7168000" />
+      <workItem from="1481472730907" duration="7268000" />
+      <workItem from="1481572530768" duration="4501000" />
+      <workItem from="1481630890134" duration="3186000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52303000" />
+    <option name="totallyTimeSpent" value="60090000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -632,7 +628,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17447917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32899022" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -685,8 +681,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4590#4767#0" expanded="true" />
-            <element signature="e#4766#4767#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -718,7 +712,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -727,9 +720,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="594" max-vertical-offset="1012">
           <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -760,8 +751,6 @@
           <caret line="70" column="38" selection-start-line="70" selection-start-column="38" selection-end-line="70" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4590#4767#0" expanded="true" />
-            <element signature="e#4766#4767#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -788,7 +777,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -797,9 +785,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="799">
           <caret line="33" column="53" selection-start-line="33" selection-start-column="53" selection-end-line="33" selection-end-column="53" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -830,8 +816,6 @@
           <caret line="5" column="19" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4590#4767#0" expanded="true" />
-            <element signature="e#4766#4767#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -863,7 +847,6 @@
           <caret line="16" column="35" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
           <folding>
             <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -872,9 +855,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="646">
           <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="12" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -905,8 +886,6 @@
           <caret line="5" column="19" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4590#4767#0" expanded="true" />
-            <element signature="e#4766#4767#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -930,7 +909,6 @@
           <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
           <folding>
             <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -939,9 +917,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="510">
           <caret line="12" column="19" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -959,8 +935,6 @@
           <caret line="5" column="19" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4590#4767#0" expanded="true" />
-            <element signature="e#4766#4767#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -984,7 +958,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1008,7 +981,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1026,29 +998,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_91/src.zip!/java/awt/Container.java">
+    <entry file="file://$PROJECT_DIR$/src/com/othello/MainClass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="17156" max-vertical-offset="82654">
-          <caret line="1096" column="0" selection-start-line="1096" selection-start-column="0" selection-end-line="1096" selection-end-column="0" />
-          <folding>
-            <element signature="e#37566#37567#0" expanded="true" />
-            <element signature="e#37612#37613#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/othello/FileParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1921">
-          <caret line="7" column="27" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/othello/ReversiConstants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-          <caret line="12" column="41" selection-start-line="12" selection-start-column="41" selection-end-line="12" selection-end-column="41" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1058,18 +1011,11 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/othello/SettingsDialog.form">
-      <provider selected="true" editor-type-id="ui-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/othello/MainClass.java">
+    <entry file="file://$PROJECT_DIR$/src/com/othello/ReversiConstants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="442">
+          <caret line="15" column="59" selection-start-line="15" selection-start-column="59" selection-end-line="15" selection-end-column="59" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1081,25 +1027,43 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/othello/GameBoard.java">
+    <entry file="file://$PROJECT_DIR$/src/com/othello/FileParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="564" max-vertical-offset="2482">
-          <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
-          <folding>
-            <element signature="docComment;class#GameBoard#0" expanded="false" />
-            <element signature="method#setCurrentPlayerIndicator#0;class#GameBoard#0" expanded="false" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1921">
+          <caret line="7" column="27" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/othello/SettingsDialog.form">
+      <provider selected="true" editor-type-id="ui-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_91/src.zip!/java/awt/Container.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="17156" max-vertical-offset="82654">
+          <caret line="1096" column="0" selection-start-line="1096" selection-start-column="0" selection-end-line="1096" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/othello/Worker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46717557" vertical-offset="204" max-vertical-offset="2924">
-          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="31" selection-end-column="83" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2737">
+          <caret line="157" column="5" selection-start-line="157" selection-start-column="5" selection-end-line="157" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4590#4767#0" expanded="true" />
-            <element signature="e#4766#4767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/othello/GameBoard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.28549618" vertical-offset="663" max-vertical-offset="3128">
+          <caret line="33" column="52" selection-start-line="33" selection-start-column="52" selection-end-line="33" selection-end-column="52" />
+          <folding>
+            <element signature="docComment;class#GameBoard#0" expanded="false" />
           </folding>
         </state>
       </provider>
