@@ -20,15 +20,10 @@ public class Worker {
 
     public void generateMove() {
 
-        if (getAvailableMoves(currentState).size() == 0)
-        {
-            ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
-            if (getAvailableMoves(nextState).size() == 0)
-            {
-                board.gameIsOver();
-            }
+        if (gameIsOver(currentState) == true) {
+            board.gameIsOver();
+            return;
         }
-
         if ( (currentState.bIsBlackMove && blackPlayerType == 1) || (!currentState.bIsBlackMove && whitePlayerType == 1) ) {
             if (getPCMove() == false) {
                 if ((!currentState.bIsBlackMove && blackPlayerType == 1) || (currentState.bIsBlackMove && whitePlayerType == 1)) {
@@ -75,9 +70,7 @@ public class Worker {
 
     //create a counter method
 
-    /* My logic - mabye not the best one but it will work :) . So... where I find blank cell i check all the 8 neighbours (or less) cells. if there cell with the
-  oposite color i move in that direction as long as the oposite color is . if i cross a blank cell i can cover all cell with my
-   */
+
     private ArrayList<byte[][]> getAvailableMoves(ReversiBoardState currentState) {
         byte[][] currentBoard = currentState.boardStateBeforeMove;
         boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
@@ -118,12 +111,18 @@ public class Worker {
                 }
             });
             timer.start();
-
-            ;
         }
     }
 
-    public static void checkMoves(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
+    /**
+     * Create a new board state according to given coordinate from the current board .
+     * @param currentBoard -
+     * @param i - row coordinate of human click on board
+     * @param j - col coordinate of human click on board
+     * @param bCurrentPlayerIsBlack
+     * @param optionalBoard
+     */
+    private static void checkMoves(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
         byte oppositePlayer = (byte) (bCurrentPlayerIsBlack ? 1 : 2);
         for (int horInterval = -1; horInterval < 2 ; horInterval++) {
             for (int verInterval = -1; verInterval < 2; verInterval++) {
@@ -149,7 +148,7 @@ public class Worker {
         }
     }
 
-    public static byte[][] deepCopyMatrix(byte[][] currentBoard) {
+    private static byte[][] deepCopyMatrix(byte[][] currentBoard) {
         if (currentBoard == null)
             return null;
         byte[][] result = new byte[currentBoard.length][];
@@ -159,8 +158,60 @@ public class Worker {
         return result;
     }
 
+    private boolean gameIsOver(ReversiBoardState currentState){
+        int count = 0;
+        boolean gameIsOver = false;
+        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
+                if (currentState.boardStateBeforeMove[i][j] != 0) {
+                    count++;
+                }
+            }
+        }
+        if (count == ReversiConstants.boardSquare) {
+            gameIsOver = true;
+        } else if (getAvailableMoves(currentState).size() == 0) {
+            ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
+            if(getAvailableMoves(nextState).size() == 0) {
+                gameIsOver = true;
+            }
+        }
+        return gameIsOver;
+    }
 
+    private int sumAllBoard(){
+        int count = 0;
+        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
+                if (currentState.boardStateBeforeMove[i][j] != 0) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 
+    private int sunAllWhites(){
+        int count = 0;
+        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
+                if (currentState.boardStateBeforeMove[i][j] == 1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 
-
+    private int sunAllBlacks(){
+        int count = 0;
+        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
+                if (currentState.boardStateBeforeMove[i][j] == 2) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 }
