@@ -3,6 +3,7 @@ package com.othello;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 
 /**
  * Created by Adam on 04/12/2016.
@@ -50,36 +51,50 @@ public class GameBoard {
     public void repaintBoard(ReversiBoardState boardState) {
         currentBlack = 0;
         currentWhite = 0;
+        boardPanel.removeAll();
         bCurrentPlayerIsBlack = boardState.bIsBlackMove;
         setCurrentPlayerIndicator(bCurrentPlayerIsBlack);
         byte[][] boardArray = boardState.boardStateBeforeMove;
         for (int i = 0; i < ReversiConstants.boardHeight; i++){
             for (int j = 0; j < ReversiConstants.boardWidth; j++) {
-                CirclePanel guiObject = boardGuiArray[i][j];
+                final int finalI = i;
+                final int finalJ = j;
+                boardGuiArray[i][j] = null;
                 byte positionValue = boardArray[i][j];
                 Color color = ReversiConstants.reversiGreen;
                 switch (positionValue) {
                     case 1:
-                        color =   Color.white;
+                        color =   ReversiConstants.reversiWhite;
                         currentWhite++;
                         break;
                     case 2:
-                        color =   Color.black;
+                        color =   ReversiConstants.reversiBlack;
                         currentBlack++;
                 }
-                guiObject.setColor(color);
+                CirclePanel guiObject = new CirclePanel(color);
+                guiObject.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        guiObjectClicked(finalI, finalJ);
+                    }
+                });
+                boardGuiArray[i][j] = guiObject;
+                boardPanel.add(guiObject);
             }
         }
+        System.gc();
         updateProgressBar();
     }
 
     private void setCurrentPlayerIndicator(boolean isCurrentPlayerBlack)
     {
-        Color colorToSet = Color.white;
+        Color colorToSet = ReversiConstants.reversiWhite;
         if (isCurrentPlayerBlack) {
-            colorToSet = Color.black;
+            colorToSet = ReversiConstants.reversiBlack;
         }
-        currentColorCirclePanel.setColor(colorToSet);
+        currentColorPanel.removeAll();
+        currentColorCirclePanel = new CirclePanel(colorToSet);
+        currentColorPanel.add(currentColorCirclePanel);
     }
 
     private void updateProgressBar() {
@@ -91,25 +106,7 @@ public class GameBoard {
     private void createUIComponents() {
         // TODO: place custom component creation code here
         boardPanel = new JPanel(new GridLayout(ReversiConstants.boardHeight, ReversiConstants.boardHeight));
-        for (int i = 0; i < ReversiConstants.boardHeight; i++){
-            for (int j = 0; j < ReversiConstants.boardWidth; j++) {
-                CirclePanel guiObject = new CirclePanel();
-                final int finalI = i;
-                final int finalJ = j;
-                guiObject.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        guiObjectClicked(finalI, finalJ);
-                    }
-                });
-                boardGuiArray[i][j] = guiObject;
-                boardPanel.add(guiObject);
-
-            }
-        }
         currentColorPanel = new JPanel(new GridLayout(1,1));
-        currentColorCirclePanel = new CirclePanel();
-        currentColorPanel.add(currentColorCirclePanel);
     }
 
     public void guiObjectClicked(int row, int col){
@@ -137,16 +134,39 @@ public class GameBoard {
     }
 
     private static class CirclePanel extends JPanel {
-        public CirclePanel() {
+
+        Color mainColor = ReversiConstants.reversiGreen;
+        Color midColor1 = ReversiConstants.reversiGreen;
+        Color midColor2 = ReversiConstants.reversiGreen;
+
+        public CirclePanel(Color color) {
             this.setPreferredSize(new Dimension(20, 20));
             this.setForeground(ReversiConstants.reversiGreen);
             this.setBackground(ReversiConstants.reversiGreen);
             this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            setColor(color);
 
         }
 
         public void setColor(Color color) {
-            this.setForeground(color);
+            if (color.equals(ReversiConstants.reversiGreen))
+            {
+                mainColor = ReversiConstants.reversiGreen;
+                midColor1 = ReversiConstants.reversiGreen;
+                midColor2 = ReversiConstants.reversiGreen;
+            }
+            else if (color.equals(ReversiConstants.reversiWhite))
+            {
+                mainColor = ReversiConstants.reversiWhite;
+                midColor1 = ReversiConstants.lightMiddle;
+                midColor2 = ReversiConstants.darkMiddle;
+            }
+            else if (color.equals(ReversiConstants.reversiBlack))
+            {
+                mainColor = ReversiConstants.darkMiddle;
+                midColor1 = ReversiConstants.reversiBlack;
+                midColor2 = Color.BLACK;
+            }
         }
 
         public Color getColor() {
@@ -160,8 +180,19 @@ public class GameBoard {
             int d = Math.min(size.width, size.height) - 10;
             int x = (size.width - d) / 2;
             int y = (size.height - d) / 2;
-            g.fillOval(x, y, d, d);
-            g.drawOval(x, y, d, d);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            int w = getWidth();
+            int h = getHeight();
+            Point2D center = new Point2D.Float(2*w/3, h/3);
+            float[] dist = {0.9f, 0.97f, 1.0f};
+            Color[] colors = {mainColor, midColor1, midColor2};
+            RadialGradientPaint gp = new RadialGradientPaint(center, (d+20)/2, dist, colors);  //GradientPaint(0, 0, mainColor, w/3, h/3, color2, false);
+            g2d.setPaint(gp);
+            g2d.fillOval(x, y, d, d);
+            g2d.drawOval(x, y, d, d);
+
+
         }
     }
 }
