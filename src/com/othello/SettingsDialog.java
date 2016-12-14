@@ -21,13 +21,13 @@ public class SettingsDialog extends JDialog {
     private JCheckBox createdByMeCheckBox;
 
     private static FileParser parser;
-    private static Worker worker;
+    private static Logic logic;
     private static GameBoard board;
 
-    public SettingsDialog(GameBoard board, Worker worker, FileParser parser) {
+    public SettingsDialog(GameBoard board, Logic logic, FileParser parser) {
 
         this.board = board;
-        this.worker = worker;
+        this.logic = logic;
         this.parser = parser;
 
         setContentPane(contentPane);
@@ -38,7 +38,7 @@ public class SettingsDialog extends JDialog {
         SpinnerModel depthModel = new SpinnerNumberModel(4, 1, 10, 1);
         depthSpinner.setModel(depthModel);
 
-        SpinnerModel DelayModel = new SpinnerNumberModel(250, 0, 1000, 50);
+        SpinnerModel DelayModel = new SpinnerNumberModel(250, 50, 1000, 50);
         delaySpinner.setModel(DelayModel);
 
         JComponent editor = depthSpinner.getEditor();
@@ -108,8 +108,8 @@ public class SettingsDialog extends JDialog {
         }
 
         parser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        worker.init(board, parser, whitePlayerType, blackPlayerType, depth, delayTime);
-        board.init(worker, whitePlayerType, blackPlayerType);
+        logic.init(board, parser, whitePlayerType, blackPlayerType, depth, delayTime);
+        board.init(logic, whitePlayerType, blackPlayerType);
         dispose();
     }
 

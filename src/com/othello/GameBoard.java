@@ -27,11 +27,11 @@ public class GameBoard {
     private String blackPlayerType = "Human";
     private String whitePlayerType = "Human";
     private boolean bCurrentPlayerIsBlack = true;
-    private Worker worker = null;
+    private Logic logic = null;
 
     public GameBoard() {
         boardGuiArray = new CirclePanel[ReversiConstants.boardHeight][ReversiConstants.boardWidth];
-        progressBar.setMaximum(ReversiConstants.boardHeight * ReversiConstants.boardWidth);
+        progressBar.setMaximum(ReversiConstants.boardSquare);
         updateProgressBar();
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -61,14 +61,14 @@ public class GameBoard {
                 final int finalJ = j;
                 boardGuiArray[i][j] = null;
                 byte positionValue = boardArray[i][j];
-                Color color = ReversiConstants.reversiGreen;
+                Color color = ReversiConstants.Colors.reversiGreen;
                 switch (positionValue) {
-                    case 1:
-                        color =   ReversiConstants.reversiWhite;
+                    case ReversiConstants.CubeStates.white:
+                        color =   ReversiConstants.Colors.reversiWhite;
                         currentWhite++;
                         break;
-                    case 2:
-                        color =   ReversiConstants.reversiBlack;
+                    case ReversiConstants.CubeStates.black:
+                        color =   ReversiConstants.Colors.reversiBlack;
                         currentBlack++;
                 }
                 CirclePanel guiObject = new CirclePanel(color);
@@ -86,11 +86,10 @@ public class GameBoard {
         updateProgressBar();
     }
 
-    private void setCurrentPlayerIndicator(boolean isCurrentPlayerBlack)
-    {
-        Color colorToSet = ReversiConstants.reversiWhite;
+    private void setCurrentPlayerIndicator(boolean isCurrentPlayerBlack) {
+        Color colorToSet = ReversiConstants.Colors.reversiWhite;
         if (isCurrentPlayerBlack) {
-            colorToSet = ReversiConstants.reversiBlack;
+            colorToSet = ReversiConstants.Colors.reversiBlack;
         }
         currentColorPanel.removeAll();
         currentColorCirclePanel = new CirclePanel(colorToSet);
@@ -111,8 +110,8 @@ public class GameBoard {
 
     public void guiObjectClicked(int row, int col){
         if ((blackPlayerType.equals("Human") && bCurrentPlayerIsBlack) ||  (whitePlayerType.equals("Human") && !bCurrentPlayerIsBlack)) {
-            if (boardGuiArray[row][col].getColor() == ReversiConstants.reversiGreen) {
-                worker.getHumanMove(row, col);
+            if (boardGuiArray[row][col].getColor() == ReversiConstants.Colors.reversiGreen) {
+                logic.getHumanMove(row, col);
             }
         }
     }
@@ -121,50 +120,50 @@ public class GameBoard {
         return mainPanel;
     }
 
-    public void init(Worker worker, byte whitePlayerType, byte blackPlayerType) {
-        this.worker = worker;
+    public void init(Logic logic, byte whitePlayerType, byte blackPlayerType) {
+        this.logic = logic;
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
     }
 
     public void gameIsOver() {
-        String strRes = "Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite;
-        JOptionPane.showMessageDialog(null, "Game Is Over !!! \n" + strRes);
-
+        String strRes = currentBlack > currentWhite ? "Black Wins !!! " : currentBlack == currentWhite ? "It Was A Tie !" : "White Wins !!!";
+        strRes += "\n" + "The Score Was: Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite;
+        JOptionPane.showMessageDialog(null, "Game Is Over, " + strRes);
     }
 
     private static class CirclePanel extends JPanel {
 
-        Color mainColor = ReversiConstants.reversiGreen;
-        Color midColor1 = ReversiConstants.reversiGreen;
-        Color midColor2 = ReversiConstants.reversiGreen;
+        Color mainColor = ReversiConstants.Colors.reversiGreen;
+        Color midColor1 = ReversiConstants.Colors.reversiGreen;
+        Color midColor2 = ReversiConstants.Colors.reversiGreen;
 
         public CirclePanel(Color color) {
             this.setPreferredSize(new Dimension(20, 20));
-            this.setForeground(ReversiConstants.reversiGreen);
-            this.setBackground(ReversiConstants.reversiGreen);
-            this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            this.setForeground(ReversiConstants.Colors.reversiGreen);
+            this.setBackground(ReversiConstants.Colors.reversiGreen);
+            this.setBorder(BorderFactory.createLineBorder(ReversiConstants.Colors.reversiDarkGreen));
             setColor(color);
 
         }
 
         public void setColor(Color color) {
-            if (color.equals(ReversiConstants.reversiGreen))
+            if (color.equals(ReversiConstants.Colors.reversiGreen))
             {
-                mainColor = ReversiConstants.reversiGreen;
-                midColor1 = ReversiConstants.reversiGreen;
-                midColor2 = ReversiConstants.reversiGreen;
+                mainColor = ReversiConstants.Colors.reversiGreen;
+                midColor1 = ReversiConstants.Colors.reversiGreen;
+                midColor2 = ReversiConstants.Colors.reversiGreen;
             }
-            else if (color.equals(ReversiConstants.reversiWhite))
+            else if (color.equals(ReversiConstants.Colors.reversiWhite))
             {
-                mainColor = ReversiConstants.reversiWhite;
-                midColor1 = ReversiConstants.lightMiddle;
-                midColor2 = ReversiConstants.darkMiddle;
+                mainColor = ReversiConstants.Colors.reversiWhite;
+                midColor1 = ReversiConstants.Colors.lightMiddle;
+                midColor2 = ReversiConstants.Colors.darkMiddle;
             }
-            else if (color.equals(ReversiConstants.reversiBlack))
+            else if (color.equals(ReversiConstants.Colors.reversiBlack))
             {
-                mainColor = ReversiConstants.darkMiddle;
-                midColor1 = ReversiConstants.reversiBlack;
+                mainColor = ReversiConstants.Colors.darkMiddle;
+                midColor1 = ReversiConstants.Colors.reversiBlack;
                 midColor2 = Color.BLACK;
             }
         }

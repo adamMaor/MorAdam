@@ -9,16 +9,16 @@ import java.awt.*;
 public class MainClass {
 
     private static FileParser parser;
-    private static Worker worker;
+    private static Logic logic;
     private static GameBoard board;
 
     public static void main(String[] args) {
 
         board = new GameBoard();
-        worker = new Worker();
+        logic = new Logic();
         parser = new FileParser();
 
-        SettingsDialog dlg = new SettingsDialog(board, worker, parser);
+        SettingsDialog dlg = new SettingsDialog(board, logic, parser);
         dlg.pack();
         dlg.setMinimumSize(dlg.getSize());
         dlg.setSize(500, dlg.getHeight());
@@ -29,10 +29,10 @@ public class MainClass {
         frame.setMaximumSize(new Dimension(600,600));
         frame.setContentPane(board.mainPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,1000);
+        frame.setSize(900,1000);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        worker.generateMove();
+        logic.generateMove();
     }
 }

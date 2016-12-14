@@ -52,3 +52,6 @@ out/production/Othello/com/othello/GameBoard.class
 reversiComFile.txt
 out/production/Othello/com/othello/GameBoard$CirclePanel.class
 *.class
+out/production/Othello/com/othello/MainClass.class
+out/production/Othello/com/othello/SettingsDialog$1.class
+*.class

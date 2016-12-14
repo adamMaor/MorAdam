@@ -37,6 +37,7 @@
         </constraints>
         <properties>
           <text value="Log"/>
+          <visible value="false"/>
         </properties>
       </component>
       <grid id="4f359" binding="statusBar" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

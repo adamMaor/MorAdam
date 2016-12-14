@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Created by Adam on 09/12/2016.
  */
-public class Worker {
+public class Logic {
     public static ReversiBoardState currentState = null;
     private byte whitePlayerType = 0, blackPlayerType = 0;
     private int depth = 0;
@@ -29,10 +29,17 @@ public class Worker {
         board.repaintBoard(currentState);
     }
 
+    /**
+     * This method will be called before every turn
+     * If it is a computer turn it will call the computer move generator
+     * If it is other computer turn will wait on the file to get the other PC move
+     * Else it will wait for User Input
+     */
     public void generateMove() {
-        if ( (currentState.bIsBlackMove && blackPlayerType == 1) || (!currentState.bIsBlackMove && whitePlayerType == 1) ) {
+        if (isCurrentPlayerPC()) {
             if (getPCMove() == false) {
-                if ((!currentState.bIsBlackMove && blackPlayerType == 1) || (currentState.bIsBlackMove && whitePlayerType == 1)) {
+                // no moves available for for this PC player
+                if (isNextPlayerPC()) {
                     currentState.bIsBlackMove = !currentState.bIsBlackMove;
                     getPCMove();
                     return;
@@ -43,7 +50,27 @@ public class Worker {
             }
         }
         // now check for other pc logic
-        // if non then waiting for user (Human) input
+        else if (isCurrentPlayerOtherPC()) {
+            // wait for other PC move - maybe same logic as PC to enable play between 2 PC via the file
+            // We'll think about it. currently only one player can be other PC
+
+        }
+        // if non then waiting for user (Human) input - Do Nothing! just wait
+    }
+
+    private boolean isCurrentPlayerPC() {
+        return (currentState.bIsBlackMove && blackPlayerType == ReversiConstants.PlayerTypes.pc)
+                || (!currentState.bIsBlackMove && whitePlayerType == ReversiConstants.PlayerTypes.pc);
+    }
+
+    private boolean isNextPlayerPC() {
+        return (!currentState.bIsBlackMove && blackPlayerType == ReversiConstants.PlayerTypes.pc)
+                || (currentState.bIsBlackMove && whitePlayerType == ReversiConstants.PlayerTypes.pc);
+    }
+
+    private boolean isCurrentPlayerOtherPC() {
+        return (currentState.bIsBlackMove && blackPlayerType == ReversiConstants.PlayerTypes.otherPC)
+                || (!currentState.bIsBlackMove && whitePlayerType == ReversiConstants.PlayerTypes.otherPC);
     }
 
     /**
@@ -53,7 +80,7 @@ public class Worker {
      */
     public void getHumanMove(int row, int col) {
         byte[][] optionalBoard = deepCopyMatrix(currentState.boardStateBeforeMove);
-        checkMoves(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove, optionalBoard);
+        checkMovesForPoint(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove, optionalBoard);
         if (!(Arrays.deepEquals(optionalBoard,currentState.boardStateBeforeMove ))) {
             currentState.boardStateBeforeMove = optionalBoard;
             currentState.bIsBlackMove = !(currentState.bIsBlackMove);
@@ -98,8 +125,8 @@ public class Worker {
         ArrayList<byte[][]> availableMoves = new ArrayList<byte[][]>();
         for (int i = 0; i < ReversiConstants.boardHeight; i++) {
             for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
-                if (currentBoard[i][j] == 0) {
-                    checkMoves(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
+                if (currentBoard[i][j] == ReversiConstants.CubeStates.none) {
+                    checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
                 }
                 if (!(Arrays.deepEquals(optionalBoard, currentBoard))) {
                     availableMoves.add(optionalBoard);
@@ -111,14 +138,14 @@ public class Worker {
     }
 
     /**
-     * Create a new board state according to given coordinate from the current board .
+     * Create a new board state according to given coordinate from the current board.
      * @param currentBoard -
      * @param i - row coordinate of human click on board
      * @param j - col coordinate of human click on board
      * @param bCurrentPlayerIsBlack
      * @param optionalBoard
      */
-    private static void checkMoves(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
+    private static void checkMovesForPoint(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
         byte oppositePlayer = (byte) (bCurrentPlayerIsBlack ? 1 : 2);
         for (int horInterval = -1; horInterval < 2 ; horInterval++) {
             for (int verInterval = -1; verInterval < 2; verInterval++) {
