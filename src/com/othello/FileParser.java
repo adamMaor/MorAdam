@@ -44,10 +44,10 @@ public class FileParser {
             String strLastMove = linesList.get(linesList.size() - 1);
             ArrayList<String> words = new ArrayList(Arrays.asList(strLastMove.split(",")));
             boolean isBlackTurn = words.get(0).equals("black") ? true : false;
-            byte[][] byteArray = new byte[ReversiConstants.boardHeight][ReversiConstants.boardWidth];
+            byte[][] byteArray = new byte[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
             int row = 0, col =0;
             int wordIndex = 1;
-            while (row < ReversiConstants.boardHeight)
+            while (row < ReversiConstants.BoardSize.boardHeight)
             {
                 String[] currParams = words.get(wordIndex++).split(" ");
                 int seqLength = Integer.parseInt(currParams[0]);
@@ -58,7 +58,7 @@ public class FileParser {
                     byteArray[row][currColIndex] = (byte)value;
                 }
 
-                if (currColIndex == ReversiConstants.boardWidth) {
+                if (currColIndex == ReversiConstants.BoardSize.boardWidth) {
                     col = 0;
                     row++;
                 }
@@ -75,12 +75,12 @@ public class FileParser {
     public void writeNextState(ReversiBoardState nextState){
         String strLine = nextState.bIsBlackMove ? "black," : "white,";
         byte[][] byteArray = nextState.boardStateBeforeMove;
-        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
+        for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
             int j = 0;
-            while (j <ReversiConstants.boardWidth) {
+            while (j <ReversiConstants.BoardSize.boardWidth) {
                 byte val = byteArray[i][j];
                 int seqLen = 1;
-                while (j + seqLen < ReversiConstants.boardWidth && byteArray[i][j + seqLen] == val) {
+                while (j + seqLen < ReversiConstants.BoardSize.boardWidth && byteArray[i][j + seqLen] == val) {
                     seqLen++;
                 }
                 strLine += "" + seqLen + " " + val + ",";
@@ -98,8 +98,10 @@ public class FileParser {
 
     private void writeInitialState(boolean bIsBlackFirst)
     {
-        String strLine = bIsBlackFirst ? "black," : "white,";
-        strLine += "12 0,12 0,12 0,12 0,12 0,5 0,1 1,1 2,5 0,5 0,1 2,1 1,5 0,12 0,12 0,12 0,12 0,12 0,end" +  "\n";
+//        String strLine = bIsBlackFirst ? "black," : "white,";
+//        strLine += "12 0,12 0,12 0,12 0,12 0,5 0,1 1,1 2,5 0,5 0,1 2,1 1,5 0,12 0,12 0,12 0,12 0,12 0,end" +  "\n";
+        String strLine = "white,12 1,11 1,1 0,11 1,1 2,11 1,1 2,1 2,2 1,1 2,7 1,1 2,12 2,1 2,1 1,1 2,1 1,2 2,4 1,1 2,1 1,1 2,1 1,1 2,5 1,3 2,1 1,3 2,9 1,4 2,3 1,1 2,4 1,1 2,2 0,1 2,3 1,1 0,1 2,1 0,1 1,1 0,1 2,2 0,1 2,5 0,1 2,1 0,1 1,end" + "\n";
+
         try {
             Files.write(sharedFile, strLine.getBytes());
         } catch (IOException e) {

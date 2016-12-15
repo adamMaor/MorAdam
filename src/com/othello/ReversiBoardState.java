@@ -16,8 +16,8 @@ public class ReversiBoardState {
     public String toString() {
         String strRes = "ReversiBoardState{" +
                 "bIsBlackMove=" + bIsBlackMove + "\n";
-        for (int i = 0 ; i < ReversiConstants.boardHeight; i++) {
-            for (int j = 0; j < ReversiConstants.boardWidth; j++) {
+        for (int i = 0 ; i < ReversiConstants.BoardSize.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.BoardSize.boardWidth; j++) {
                 strRes += ("" + boardStateBeforeMove[i][j] +", ");
             }
             strRes += "\n";

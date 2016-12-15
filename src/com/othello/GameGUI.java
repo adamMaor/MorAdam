@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 /**
  * Created by Adam on 04/12/2016.
  */
-public class GameBoard {
+public class GameGUI {
     private JButton pauseButton;
     private JPanel mainPanel;
     private JButton startButton;
@@ -27,11 +27,11 @@ public class GameBoard {
     private String blackPlayerType = "Human";
     private String whitePlayerType = "Human";
     private boolean bCurrentPlayerIsBlack = true;
-    private Logic logic = null;
+    private GameLogic gameLogic = null;
 
-    public GameBoard() {
-        boardGuiArray = new CirclePanel[ReversiConstants.boardHeight][ReversiConstants.boardWidth];
-        progressBar.setMaximum(ReversiConstants.boardSquare);
+    public GameGUI() {
+        boardGuiArray = new CirclePanel[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
+        progressBar.setMaximum(ReversiConstants.BoardSize.boardSquare);
         updateProgressBar();
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -55,8 +55,8 @@ public class GameBoard {
         bCurrentPlayerIsBlack = boardState.bIsBlackMove;
         setCurrentPlayerIndicator(bCurrentPlayerIsBlack);
         byte[][] boardArray = boardState.boardStateBeforeMove;
-        for (int i = 0; i < ReversiConstants.boardHeight; i++){
-            for (int j = 0; j < ReversiConstants.boardWidth; j++) {
+        for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++){
+            for (int j = 0; j < ReversiConstants.BoardSize.boardWidth; j++) {
                 final int finalI = i;
                 final int finalJ = j;
                 boardGuiArray[i][j] = null;
@@ -104,14 +104,14 @@ public class GameBoard {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        boardPanel = new JPanel(new GridLayout(ReversiConstants.boardHeight, ReversiConstants.boardHeight));
+        boardPanel = new JPanel(new GridLayout(ReversiConstants.BoardSize.boardHeight, ReversiConstants.BoardSize.boardHeight));
         currentColorPanel = new JPanel(new GridLayout(1,1));
     }
 
     public void guiObjectClicked(int row, int col){
         if ((blackPlayerType.equals("Human") && bCurrentPlayerIsBlack) ||  (whitePlayerType.equals("Human") && !bCurrentPlayerIsBlack)) {
             if (boardGuiArray[row][col].getColor() == ReversiConstants.Colors.reversiGreen) {
-                logic.getHumanMove(row, col);
+                gameLogic.getHumanMove(row, col);
             }
         }
     }
@@ -120,8 +120,8 @@ public class GameBoard {
         return mainPanel;
     }
 
-    public void init(Logic logic, byte whitePlayerType, byte blackPlayerType) {
-        this.logic = logic;
+    public void init(GameLogic gameLogic, byte whitePlayerType, byte blackPlayerType) {
+        this.gameLogic = gameLogic;
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
     }
@@ -130,6 +130,11 @@ public class GameBoard {
         String strRes = currentBlack > currentWhite ? "Black Wins !!! " : currentBlack == currentWhite ? "It Was A Tie !" : "White Wins !!!";
         strRes += "\n" + "The Score Was: Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite;
         JOptionPane.showMessageDialog(null, "Game Is Over, " + strRes);
+    }
+
+    public void playerHadChanged() {
+        String strRes = "Player had changed because no legal moves were available";
+        JOptionPane.showMessageDialog(null, strRes);
     }
 
     private static class CirclePanel extends JPanel {
@@ -190,8 +195,6 @@ public class GameBoard {
             g2d.setPaint(gp);
             g2d.fillOval(x, y, d, d);
             g2d.drawOval(x, y, d, d);
-
-
         }
     }
 }

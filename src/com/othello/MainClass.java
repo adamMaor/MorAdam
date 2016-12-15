@@ -8,17 +8,17 @@ import java.awt.*;
  */
 public class MainClass {
 
-    private static FileParser parser;
-    private static Logic logic;
-    private static GameBoard board;
+    private static FileParser fileParser;
+    private static GameLogic gameLogic;
+    private static GameGUI gameGUI;
 
     public static void main(String[] args) {
 
-        board = new GameBoard();
-        logic = new Logic();
-        parser = new FileParser();
+        gameGUI = new GameGUI();
+        gameLogic = new GameLogic();
+        fileParser = new FileParser();
 
-        SettingsDialog dlg = new SettingsDialog(board, logic, parser);
+        SettingsDialog dlg = new SettingsDialog(gameGUI, gameLogic, fileParser);
         dlg.pack();
         dlg.setMinimumSize(dlg.getSize());
         dlg.setSize(500, dlg.getHeight());
@@ -26,13 +26,13 @@ public class MainClass {
         dlg.setVisible(true);
 
         JFrame frame = new JFrame("Reversi");
-        frame.setMaximumSize(new Dimension(600,600));
-        frame.setContentPane(board.mainPanel());
+        frame.setMaximumSize(new Dimension(600, 600));
+        frame.setContentPane(gameGUI.mainPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900,1000);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        logic.generateMove();
+        gameLogic.generateMove();
     }
 }

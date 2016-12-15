@@ -20,15 +20,15 @@ public class SettingsDialog extends JDialog {
     private JButton generateFileButton;
     private JCheckBox createdByMeCheckBox;
 
-    private static FileParser parser;
-    private static Logic logic;
-    private static GameBoard board;
+    private static FileParser fileParser;
+    private static GameLogic gameLogic;
+    private static GameGUI gameGUI;
 
-    public SettingsDialog(GameBoard board, Logic logic, FileParser parser) {
+    public SettingsDialog(GameGUI gameGUI, GameLogic gameLogic, FileParser fileParser) {
 
-        this.board = board;
-        this.logic = logic;
-        this.parser = parser;
+        this.gameGUI = gameGUI;
+        this.gameLogic = gameLogic;
+        this.fileParser = fileParser;
 
         setContentPane(contentPane);
         setTitle("Set your Reversi Game Up");
@@ -107,9 +107,9 @@ public class SettingsDialog extends JDialog {
             return;
         }
 
-        parser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        logic.init(board, parser, whitePlayerType, blackPlayerType, depth, delayTime);
-        board.init(logic, whitePlayerType, blackPlayerType);
+        fileParser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
+        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, delayTime);
+        gameGUI.init(gameLogic, whitePlayerType, blackPlayerType);
         dispose();
     }
 
