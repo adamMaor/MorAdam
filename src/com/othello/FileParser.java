@@ -98,9 +98,9 @@ public class FileParser {
 
     private void writeInitialState(boolean bIsBlackFirst)
     {
-//        String strLine = bIsBlackFirst ? "black," : "white,";
-//        strLine += "12 0,12 0,12 0,12 0,12 0,5 0,1 1,1 2,5 0,5 0,1 2,1 1,5 0,12 0,12 0,12 0,12 0,12 0,end" +  "\n";
-        String strLine = "white,12 1,11 1,1 0,11 1,1 2,11 1,1 2,1 2,2 1,1 2,7 1,1 2,12 2,1 2,1 1,1 2,1 1,2 2,4 1,1 2,1 1,1 2,1 1,1 2,5 1,3 2,1 1,3 2,9 1,4 2,3 1,1 2,4 1,1 2,2 0,1 2,3 1,1 0,1 2,1 0,1 1,1 0,1 2,2 0,1 2,5 0,1 2,1 0,1 1,end" + "\n";
+        String strLine = bIsBlackFirst ? "black," : "white,";
+        strLine += "12 0,12 0,12 0,12 0,12 0,5 0,1 1,1 2,5 0,5 0,1 2,1 1,5 0,12 0,12 0,12 0,12 0,12 0,end" +  "\n";
+//        String strLine = "white,12 1,11 1,1 0,11 1,1 2,11 1,1 2,1 2,2 1,1 2,7 1,1 2,12 2,1 2,1 1,1 2,1 1,2 2,4 1,1 2,1 1,1 2,1 1,1 2,5 1,3 2,1 1,3 2,9 1,4 2,3 1,1 2,4 1,1 2,2 0,1 2,3 1,1 0,1 2,1 0,1 1,1 0,1 2,2 0,1 2,5 0,1 2,1 0,1 1,end" + "\n";
 
         try {
             Files.write(sharedFile, strLine.getBytes());
