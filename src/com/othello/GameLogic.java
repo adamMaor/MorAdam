@@ -15,18 +15,20 @@ public class GameLogic {
     private byte whitePlayerType = 0, blackPlayerType = 0;
     private int depth = 4;
     private int delayTime = 250;
+    ArrayList<ReversiBoardState> nextAvailableMovesList;
     private GameGUI gameGUI = null;
     private FileParser fileParser = null;
 
-    public void init(GameGUI board, FileParser parser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime) {
+    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime) {
         this.whitePlayerType = whitePlayerType;
         this.blackPlayerType = blackPlayerType;
         this.depth = depth;
-        this.currentState = parser.getNextState();
-        this.gameGUI = board;
-        this.fileParser = parser;
+        this.fileParser = fileParser;
+        this.currentState = fileParser.getNextState();
+        this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
+        this.gameGUI = gameGUI;
         this.delayTime = delayTime;
-        board.repaintBoard(currentState);
+        gameGUI.repaintBoard(currentState);
     }
 
     /**
@@ -110,47 +112,34 @@ public class GameLogic {
     }
 
     private boolean getPCMove() {
-        ArrayList<byte[][]> potentialMoves = getAvailableMoves(currentState);
-        if (potentialMoves.size() == 0) {
-            // no legal moves
+
+        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList);
+        ReversiBoardState nextState = miniMaxSolver.launchMiniMax(false);
+        if (nextState == null) {
             return false;
         }
+        changeTotalCurrentState(nextState);
         // sleep for the delay time specified in settings
         try {
             Thread.sleep(delayTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        byte[][] selectedMove = getBestMove(potentialMoves);
-        changeTotalCurrentState(selectedMove);
         return true;
     }
 
-    /**
-     * this method will call the minimax (W/WO alpha-Beta) function and determine the best move for the PC
-     * @param potentialMoves - a list of potential moves
-     * @return = the best move according to heuristics
-     */
-    private byte[][] getBestMove(ArrayList<byte[][]> potentialMoves) {
-        // currently as random
-        // will be a switch that will act according to setting set by user
-        Random rand = new Random();
-        byte[][] selectedMove = potentialMoves.get(rand.nextInt(potentialMoves.size()));
-        return selectedMove;
-    }
-
-    private ArrayList<byte[][]> getAvailableMoves(ReversiBoardState currentState) {
+    private ArrayList<ReversiBoardState> getAvailableMoves(ReversiBoardState currentState) {
         byte[][] currentBoard = currentState.boardStateBeforeMove;
         boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
         byte[][] optionalBoard = deepCopyMatrix(currentBoard);
-        ArrayList<byte[][]> availableMoves = new ArrayList<byte[][]>();
+        ArrayList<ReversiBoardState> availableMoves = new ArrayList<ReversiBoardState>();
         for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
             for (int j = 0; j < ReversiConstants.BoardSize.boardWidth ; j++) {
                 if (currentBoard[i][j] == ReversiConstants.CubeStates.none) {
                     checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
                 }
                 if (!(Arrays.deepEquals(optionalBoard, currentBoard))) {
-                    availableMoves.add(optionalBoard);
+                    availableMoves.add(new ReversiBoardState(optionalBoard,!currentState.bIsBlackMove));
                     optionalBoard = deepCopyMatrix(currentBoard);
                 }
             }
@@ -204,7 +193,9 @@ public class GameLogic {
 
     /** will return true if current moves are available **/
     private boolean validateMove(ReversiBoardState state) {
-        return getAvailableMoves(state).size() > 0;
+        nextAvailableMovesList.clear();
+        nextAvailableMovesList = getAvailableMoves(state);
+        return nextAvailableMovesList.size() > 0;
     }
 
     private void endGameLogic() {
@@ -221,6 +212,11 @@ public class GameLogic {
     private void changeTotalCurrentState(byte[][] newBoard) {
         currentState.bIsBlackMove = !currentState.bIsBlackMove;
         currentState.boardStateBeforeMove = newBoard;
+        refreshGui();
+    }
+
+    private void changeTotalCurrentState(ReversiBoardState newState) {
+        currentState = newState;
         refreshGui();
     }
 
@@ -241,27 +237,5 @@ public class GameLogic {
         return count;
     }
 
-//    private int sunAllWhites(){
-//        int count = 0;
-//        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
-//            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
-//                if (currentState.boardStateBeforeMove[i][j] == 1) {
-//                    count++;
-//                }
-//            }
-//        }
-//        return count;
-//    }
-//
-//    private int sunAllBlacks(){
-//        int count = 0;
-//        for (int i = 0; i < ReversiConstants.boardHeight; i++) {
-//            for (int j = 0; j < ReversiConstants.boardWidth ; j++) {
-//                if (currentState.boardStateBeforeMove[i][j] == 2) {
-//                    count++;
-//                }
-//            }
-//        }
-//        return count;
-//    }
+
 }
