@@ -105,10 +105,10 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="80d76" class="javax.swing.JButton" binding="startButton" default-binding="true">
+          <component id="80d76" class="javax.swing.JButton" binding="nextButton">
             <constraints/>
             <properties>
-              <text value="Start"/>
+              <text value="Next Turn"/>
             </properties>
           </component>
           <component id="f6533" class="javax.swing.JCheckBox" binding="autoPlayCheckBox" default-binding="true">
@@ -117,16 +117,10 @@
               <text value="Auto Play"/>
             </properties>
           </component>
-          <component id="d1037" class="javax.swing.JButton" binding="pauseButton" default-binding="true">
-            <constraints/>
-            <properties>
-              <text value="Pause"/>
-            </properties>
-          </component>
           <hspacer id="fc24b">
             <constraints/>
           </hspacer>
-          <component id="ca6d" class="javax.swing.JLabel">
+          <component id="ca6d" class="javax.swing.JLabel" binding="nextMoveLabel">
             <constraints/>
             <properties>
               <text value="Next Move: "/>

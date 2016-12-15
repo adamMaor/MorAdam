@@ -19,6 +19,8 @@ public class SettingsDialog extends JDialog {
     private JTextField filePathField;
     private JButton generateFileButton;
     private JCheckBox createdByMeCheckBox;
+    private JCheckBox showAvailableMovesGreenCheckBox;
+    private JCheckBox showLastMoveBlueCheckBox;
 
     private static FileParser fileParser;
     private static GameLogic gameLogic;
@@ -101,6 +103,8 @@ public class SettingsDialog extends JDialog {
         int depth = (Integer) depthSpinner.getValue();
         int delayTime = (Integer) delaySpinner.getValue();
         String filePath = filePathField.getText();
+        boolean isShowAvailableMoves = showAvailableMovesGreenCheckBox.isSelected();
+        boolean isShowLastMove = showLastMoveBlueCheckBox.isSelected();
         if (filePath.isEmpty() || Files.exists(Paths.get(filePath)) == false)
         {
             JOptionPane.showMessageDialog(null, "You Must Enter A shared File !!!!");
@@ -108,7 +112,7 @@ public class SettingsDialog extends JDialog {
         }
 
         fileParser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, delayTime);
+        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, delayTime, isShowAvailableMoves, isShowLastMove);
         gameGUI.init(gameLogic, whitePlayerType, blackPlayerType);
         dispose();
     }

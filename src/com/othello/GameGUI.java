@@ -4,14 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 /**
  * Created by Adam on 04/12/2016.
  */
 public class GameGUI {
-    private JButton pauseButton;
     private JPanel mainPanel;
-    private JButton startButton;
+    private JButton nextButton;
     private JCheckBox autoPlayCheckBox;
     private JPanel boardPanel;
     private JProgressBar progressBar;
@@ -19,8 +19,9 @@ public class GameGUI {
     private JTextPane logTextPane;
     private JPanel currentColorPanel;
     private JPanel statusBar;
+    private JLabel nextMoveLabel;
     private CirclePanel currentColorCirclePanel;
-    private CirclePanel[][] boardGuiArray;
+    private static CirclePanel[][] boardGuiArray;
     private int currentBlack = 2;
     private int currentWhite = 2;
     private int currentProgress = 4;
@@ -33,17 +34,20 @@ public class GameGUI {
         boardGuiArray = new CirclePanel[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
         progressBar.setMaximum(ReversiConstants.BoardSize.boardSquare);
         updateProgressBar();
-        startButton.addActionListener(new ActionListener() {
+        nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Starting Play");
-
+                boolean bIsAutoSelected = autoPlayCheckBox.isSelected();
+                nextButton.setEnabled(!bIsAutoSelected);
+                gameLogic.generateMove();
             }
         });
-        pauseButton.addActionListener(new ActionListener() {
+        autoPlayCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Pausing Play");
+                boolean isSelected = autoPlayCheckBox.isSelected();
+                gameLogic.setAutoPlay(isSelected);
+                if (!isSelected) nextButton.setEnabled(true);
             }
         });
     }
@@ -53,6 +57,7 @@ public class GameGUI {
         currentWhite = 0;
         boardPanel.removeAll();
         bCurrentPlayerIsBlack = boardState.bIsBlackMove;
+        setNextMoveLabel();
         setCurrentPlayerIndicator(bCurrentPlayerIsBlack);
         byte[][] boardArray = boardState.boardStateBeforeMove;
         for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++){
@@ -124,6 +129,14 @@ public class GameGUI {
         this.gameLogic = gameLogic;
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
+        setNextMoveLabel();
+    }
+
+    private void setNextMoveLabel() {
+        String strNextMove = "Next Move (";
+        strNextMove += bCurrentPlayerIsBlack ? blackPlayerType : whitePlayerType;
+        strNextMove += ") ";
+        nextMoveLabel.setText(strNextMove);
     }
 
     public void gameIsOver() {
@@ -135,6 +148,33 @@ public class GameGUI {
     public void playerHadChanged() {
         String strRes = "Player had changed because no legal moves were available";
         JOptionPane.showMessageDialog(null, strRes);
+    }
+
+    public static void markAvailableMoves(ReversiBoardState currentState, ArrayList<ReversiBoardState> nextAvailableMovesList) {
+        for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row ++ ) {
+             for (int col = 0 ; col < ReversiConstants.BoardSize.boardWidth; col++ ) {
+                 for (int i = 0 ; i < nextAvailableMovesList.size(); i++) {
+                     byte currentCubeState = currentState.boardStateBeforeMove[row][col];
+
+                     if (currentCubeState == ReversiConstants.CubeStates.none
+                             && currentCubeState != nextAvailableMovesList.get(i).boardStateBeforeMove[row][col]) {
+                         boardGuiArray[row][col].setBackground(Color.green);
+                     }
+                 }
+             }
+        }
+    }
+
+    public void markLastMove(ReversiBoardState currentState, ReversiBoardState lastState) {
+        for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row ++ ) {
+            for (int col = 0; col < ReversiConstants.BoardSize.boardWidth; col++) {
+                if (lastState.boardStateBeforeMove[row][col] == ReversiConstants.CubeStates.none
+                        && currentState.boardStateBeforeMove[row][col] != ReversiConstants.CubeStates.none)
+                {
+                    boardGuiArray[row][col].setBackground(Color.blue);
+                }
+            }
+        }
     }
 
     private static class CirclePanel extends JPanel {

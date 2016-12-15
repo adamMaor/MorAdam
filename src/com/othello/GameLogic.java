@@ -1,11 +1,11 @@
 package com.othello;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Created by Adam on 09/12/2016.
@@ -18,17 +18,26 @@ public class GameLogic {
     ArrayList<ReversiBoardState> nextAvailableMovesList;
     private GameGUI gameGUI = null;
     private FileParser fileParser = null;
+    private boolean bIsAutoPlayOn;
+    private boolean bShowAvailableMoves;
+    private boolean bShowLastMove;
+    private ReversiBoardState lastState;
 
-    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime) {
+    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
         this.whitePlayerType = whitePlayerType;
         this.blackPlayerType = blackPlayerType;
         this.depth = depth;
         this.fileParser = fileParser;
         this.currentState = fileParser.getNextState();
         this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
+        this.lastState = currentState;
         this.gameGUI = gameGUI;
         this.delayTime = delayTime;
-        gameGUI.repaintBoard(currentState);
+        this.bShowAvailableMoves = isShowAvailableMoves;
+        this.bShowLastMove = isShowLastMove;
+        validateMove(currentState);
+        refreshGui();
+        bIsAutoPlayOn = false;
     }
 
     /**
@@ -48,7 +57,15 @@ public class GameLogic {
                 if (isCurrentPlayerPC()) {
                     if (getPCMove() == true) {
                         // PC has played - generate next move
-                        generateMove();
+                        if (bIsAutoPlayOn) {
+                            EventQueue.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    generateMove();
+
+                                }
+                            });
+                        }
                     }
                     else {
                         //ERROR - never supposed to happen due to GameStatus check !!!
@@ -104,14 +121,17 @@ public class GameLogic {
             Timer timer = new Timer(30, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                    if (bIsAutoPlayOn) {
                         generateMove();
+                    }
                     }
                 });
             timer.start();
         }
+
     }
 
-    private boolean getPCMove() {
+    public boolean getPCMove() {
 
         MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList);
         ReversiBoardState nextState = miniMaxSolver.launchMiniMax(false);
@@ -120,10 +140,12 @@ public class GameLogic {
         }
         changeTotalCurrentState(nextState);
         // sleep for the delay time specified in settings
-        try {
-            Thread.sleep(delayTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (bIsAutoPlayOn) {
+            try {
+                Thread.sleep(delayTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return true;
     }
@@ -195,6 +217,7 @@ public class GameLogic {
     private boolean validateMove(ReversiBoardState state) {
         nextAvailableMovesList.clear();
         nextAvailableMovesList = getAvailableMoves(state);
+
         return nextAvailableMovesList.size() > 0;
     }
 
@@ -210,18 +233,25 @@ public class GameLogic {
     }
 
     private void changeTotalCurrentState(byte[][] newBoard) {
-        currentState.bIsBlackMove = !currentState.bIsBlackMove;
-        currentState.boardStateBeforeMove = newBoard;
-        refreshGui();
+        ReversiBoardState newState = new ReversiBoardState(newBoard, !currentState.bIsBlackMove);
+        changeTotalCurrentState(newState);
     }
 
     private void changeTotalCurrentState(ReversiBoardState newState) {
+        lastState = currentState;
         currentState = newState;
+        validateMove(currentState);
         refreshGui();
     }
 
     private void refreshGui() {
         gameGUI.repaintBoard(currentState);
+        if (bShowLastMove) {
+            gameGUI.markLastMove(currentState, lastState);
+        }
+        if (bShowAvailableMoves) {
+            GameGUI.markAvailableMoves(currentState, nextAvailableMovesList);
+        }
         fileParser.writeNextState(currentState);
     }
 
@@ -237,5 +267,7 @@ public class GameLogic {
         return count;
     }
 
-
+    public void setAutoPlay(boolean selected) {
+        bIsAutoPlayOn = selected;
+    }
 }

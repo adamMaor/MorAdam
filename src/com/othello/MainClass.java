@@ -25,14 +25,20 @@ public class MainClass {
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
 
-        JFrame frame = new JFrame("Reversi");
-        frame.setMaximumSize(new Dimension(600, 600));
-        frame.setContentPane(gameGUI.mainPanel());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(900,1000);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame frame = new JFrame("Reversi");
+                frame.setMaximumSize(new Dimension(600, 600));
+                frame.setContentPane(gameGUI.mainPanel());
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(900,1000);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
 
-        gameLogic.generateMove();
+            }
+        });
+
+//        gameLogic.generateMove();
     }
 }

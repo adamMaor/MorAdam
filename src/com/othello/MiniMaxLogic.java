@@ -39,6 +39,7 @@ public class MiniMaxLogic {
             return currentState;
         }
         if (nextAvailableMovesList.size() > 0) {
+            System.out.println("Minimax start - available moves = " + nextAvailableMovesList.size());
             // we know that first player is Max
             int bestScore = Integer.MIN_VALUE;
             for (ReversiBoardState state : nextAvailableMovesList) {
@@ -62,6 +63,7 @@ public class MiniMaxLogic {
             return utility(currentState);
         }
         ArrayList<ReversiBoardState> allPossibleMoves = allResults(currentState);
+
         int bestScore;
         if (allPossibleMoves.size() > 0) {
             if (bIsCurrentMax) {     // current player is Max
@@ -109,33 +111,38 @@ public class MiniMaxLogic {
         for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
             for (int j = 0; j < ReversiConstants.BoardSize.boardWidth ; j++) {
                 if (currentBoard[i][j] == ReversiConstants.CubeStates.none) {
-                    checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
-                }
-                if (!(Arrays.deepEquals(optionalBoard, currentBoard))) {
-                    allResults.add(new ReversiBoardState(optionalBoard,!bCurrentPlayerIsBlack));
-                    optionalBoard = deepCopyMatrix(currentBoard);
+                    boolean areMoves = checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
+                    if (areMoves) {
+                        allResults.add(new ReversiBoardState(optionalBoard,!bCurrentPlayerIsBlack));
+                        optionalBoard = deepCopyMatrix(currentBoard);
+                    }
                 }
             }
         }
         return allResults;
     }
 
-    private static void checkMovesForPoint(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
+    private static boolean checkMovesForPoint(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
         byte oppositePlayer = (byte) (bCurrentPlayerIsBlack ? 1 : 2);
+        boolean movesWereMade = false;
         for (int horInterval = -1; horInterval < 2 ; horInterval++) {
             for (int verInterval = -1; verInterval < 2; verInterval++) {
                 int row = i + horInterval, col = j + verInterval;
-                while (row < ReversiConstants.BoardSize.boardHeight && row >= 0
-                        && col < ReversiConstants.BoardSize.boardWidth && col >= 0
-                        && oppositePlayer == currentBoard[row][col]) {
+                boolean inBounds = row < ReversiConstants.BoardSize.boardHeight && row >= 0
+                        && col < ReversiConstants.BoardSize.boardWidth && col >= 0;
+                while ( inBounds && oppositePlayer == currentBoard[row][col]) {
                     row += horInterval;
                     col += verInterval;
+                    inBounds = row < ReversiConstants.BoardSize.boardHeight && row >= 0
+                            && col < ReversiConstants.BoardSize.boardWidth && col >= 0;
                 }
-                if (row < ReversiConstants.BoardSize.boardHeight && row >= 0 && col < ReversiConstants.BoardSize.boardWidth && col >= 0) {
+                if (inBounds) {
                     if ((row == i + horInterval && col == j + verInterval)
-                            || currentBoard[row][col] == 0){
+                            || currentBoard[row][col] == ReversiConstants.CubeStates.none){
                         continue;
                     }
+                    // if got here - changes were made
+                    movesWereMade = true;
                     while (row != i || col != j) {
                         row -= horInterval;
                         col -= verInterval;
@@ -144,14 +151,15 @@ public class MiniMaxLogic {
                 }
             }
         }
+        return movesWereMade;
     }
 
     private static byte[][] deepCopyMatrix(byte[][] currentBoard) {
         if (currentBoard == null)
             return null;
-        byte[][] result = new byte[currentBoard.length][];
+        byte[][] result = new byte[ReversiConstants.BoardSize.boardHeight][];
         for (int r = 0; r < currentBoard.length; r++) {
-            result[r] = currentBoard[r].clone();
+            result[r] = Arrays.copyOf(currentBoard[r],ReversiConstants.BoardSize.boardWidth);
         }
         return result;
     }
