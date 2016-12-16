@@ -140,23 +140,6 @@
               <text value="PC delay (mili):"/>
             </properties>
           </component>
-          <component id="80d69" class="javax.swing.JSpinner" binding="depthSpinner">
-            <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="25" height="-1"/>
-                <preferred-size width="25" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="ffce6" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Depth:"/>
-            </properties>
-          </component>
           <component id="bf37e" class="javax.swing.JSpinner" binding="delaySpinner">
             <constraints>
               <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
@@ -190,6 +173,32 @@
             <properties>
               <selected value="true"/>
               <text value="Show Last Move (Blue)"/>
+            </properties>
+          </component>
+          <component id="ffce6" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Depth:"/>
+            </properties>
+          </component>
+          <component id="80d69" class="javax.swing.JSpinner" binding="depthSpinner">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="25" height="-1"/>
+                <preferred-size width="25" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="f43f3" class="javax.swing.JCheckBox" binding="useAlphaBetaPruningCheckBox" default-binding="true">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <selected value="true"/>
+              <text value="Use Alpha-Beta Pruning"/>
             </properties>
           </component>
         </children>

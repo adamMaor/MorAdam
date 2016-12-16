@@ -14,6 +14,7 @@ public class GameLogic {
     public static ReversiBoardState currentState = null;
     private byte whitePlayerType = 0, blackPlayerType = 0;
     private int depth = 4;
+    private boolean bIsAlphaBeta;
     private int delayTime = 250;
     ArrayList<ReversiBoardState> nextAvailableMovesList;
     private GameGUI gameGUI = null;
@@ -23,10 +24,11 @@ public class GameLogic {
     private boolean bShowLastMove;
     private ReversiBoardState lastState;
 
-    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
+    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
         this.whitePlayerType = whitePlayerType;
         this.blackPlayerType = blackPlayerType;
         this.depth = depth;
+        this.bIsAlphaBeta = isAlphaBeta;
         this.fileParser = fileParser;
         this.currentState = fileParser.getNextState();
         this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
@@ -134,7 +136,7 @@ public class GameLogic {
     public boolean getPCMove() {
 
         MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList);
-        ReversiBoardState nextState = miniMaxSolver.launchMiniMax(false);
+        ReversiBoardState nextState = miniMaxSolver.launchMiniMax(bIsAlphaBeta);
         if (nextState == null) {
             return false;
         }

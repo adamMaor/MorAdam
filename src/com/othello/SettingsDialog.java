@@ -21,6 +21,7 @@ public class SettingsDialog extends JDialog {
     private JCheckBox createdByMeCheckBox;
     private JCheckBox showAvailableMovesGreenCheckBox;
     private JCheckBox showLastMoveBlueCheckBox;
+    private JCheckBox useAlphaBetaPruningCheckBox;
 
     private static FileParser fileParser;
     private static GameLogic gameLogic;
@@ -101,6 +102,7 @@ public class SettingsDialog extends JDialog {
         byte whitePlayerType = (byte)whiteCombo.getSelectedIndex();
         byte blackPlayerType = (byte)blackCombo.getSelectedIndex();
         int depth = (Integer) depthSpinner.getValue();
+        boolean isAlphaBeta = useAlphaBetaPruningCheckBox.isSelected();
         int delayTime = (Integer) delaySpinner.getValue();
         String filePath = filePathField.getText();
         boolean isShowAvailableMoves = showAvailableMovesGreenCheckBox.isSelected();
@@ -112,7 +114,7 @@ public class SettingsDialog extends JDialog {
         }
 
         fileParser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, delayTime, isShowAvailableMoves, isShowLastMove);
+        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, isAlphaBeta, delayTime, isShowAvailableMoves, isShowLastMove);
         gameGUI.init(gameLogic, whitePlayerType, blackPlayerType);
         dispose();
     }

@@ -87,7 +87,7 @@ public class GameGUI {
                 boardPanel.add(guiObject);
             }
         }
-        System.gc();
+//        System.gc();
         updateProgressBar();
     }
 
@@ -113,10 +113,16 @@ public class GameGUI {
         currentColorPanel = new JPanel(new GridLayout(1,1));
     }
 
-    public void guiObjectClicked(int row, int col){
+    public void guiObjectClicked(final int row, final int col){
         if ((blackPlayerType.equals("Human") && bCurrentPlayerIsBlack) ||  (whitePlayerType.equals("Human") && !bCurrentPlayerIsBlack)) {
             if (boardGuiArray[row][col].getColor() == ReversiConstants.Colors.reversiGreen) {
-                gameLogic.getHumanMove(row, col);
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameLogic.getHumanMove(row, col);
+                    }
+                });
+
             }
         }
     }

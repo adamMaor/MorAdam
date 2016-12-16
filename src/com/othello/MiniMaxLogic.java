@@ -23,17 +23,84 @@ public class MiniMaxLogic {
 
     public ReversiBoardState launchMiniMax(boolean isAlphaBeta)
     {
-        ReversiBoardState bestBoard = null;
+        ReversiBoardState bestBoard;
         if (isAlphaBeta) {
-
+            bestBoard = alphaBetaMiniMax(initialState, nDepth);
         }
         else {
-            bestBoard =  simpleMiniMax(initialState, nDepth);
+            bestBoard = simpleMiniMax(initialState, nDepth);
         }
         return bestBoard;
     }
 
-    public ReversiBoardState simpleMiniMax(ReversiBoardState currentState, int nDepth) {
+
+    public ReversiBoardState alphaBetaMiniMax(ReversiBoardState currentState, int nDepth) {
+        ReversiBoardState nextState = null;
+        if (nDepth == 0) {
+            return currentState;
+        }
+        if (nextAvailableMovesList.size() > 0) {
+            Integer alpha = Integer.MIN_VALUE;
+            Integer beta = Integer.MAX_VALUE;
+            // we know that first player is Max
+            int bestScore = Integer.MIN_VALUE;
+            for (ReversiBoardState state : nextAvailableMovesList) {
+                // next level is Min
+                int currScore = alphaBetaMiniMaxScorer(state, nDepth - 1, alpha, beta, false);
+                if (currScore > bestScore) {
+                    bestScore = currScore;
+                    nextState = state;
+                    alpha = Math.max(alpha, bestScore);
+                    if (alpha >= beta) {    // This is the Cutoff - no need to look at further moves -
+                        break;              // we now that whatever this maximizer will return will be greater or equal to what the minimizer in the upper level will take.
+                    }
+                }
+            }
+        }
+        else { // no moves available - not supposed to happen - will be checked in Logic
+            // will return null
+        }
+        return nextState;
+    }
+
+    private int alphaBetaMiniMaxScorer (ReversiBoardState currentState, int nDepth, Integer alpha, Integer beta, boolean bIsCurrentMax) {
+        if (nDepth == 0 /*|| terminal(currentState)*/) {
+            int score = utility(currentState);
+            return score;
+        }
+        ArrayList<ReversiBoardState> allPossibleMoves = allResults(currentState);
+        int bestScore;
+        if (allPossibleMoves.size() > 0) {
+            if (bIsCurrentMax) {  // current player is Max
+                bestScore = Integer.MIN_VALUE;
+                for (ReversiBoardState state : allPossibleMoves) {
+                    bestScore = Math.max(bestScore, alphaBetaMiniMaxScorer(state, nDepth - 1, alpha, beta, false));   // next level is Min
+                    alpha = Math.max(alpha, bestScore);
+                    if (alpha >= beta) {    // This is the Cutoff - no need to look at further moves -
+                        break;              // we now that whatever this maximizer will return will be greater or equal to what the minimizer in the upper level will take.
+                    }
+                }
+            }
+            else {   // current player is Min
+                bestScore = Integer.MAX_VALUE;
+                for (ReversiBoardState state : allPossibleMoves) {
+                    bestScore = Math.min(bestScore, alphaBetaMiniMaxScorer(state, nDepth - 1, alpha, beta, true)); // next level is Max
+                    beta = Math.min(beta, bestScore);
+                    if (alpha >= beta) {    // Same as with maximizer only with min.
+                        break;
+                    }
+                }
+            }
+        }
+        else  { // no legal moves for this player - change player and return the next score
+            ReversiBoardState newState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
+            return alphaBetaMiniMaxScorer(newState, nDepth - 1, alpha, beta, !bIsCurrentMax);
+        }
+
+        return bestScore;
+    }
+
+    private ReversiBoardState simpleMiniMax(ReversiBoardState currentState, int nDepth) {
         ReversiBoardState nextState = null;
         if (nDepth == 0) {
             return currentState;
@@ -69,20 +136,14 @@ public class MiniMaxLogic {
                 bestScore = Integer.MIN_VALUE;
                 for (ReversiBoardState state : allPossibleMoves) {
                     // next level is Min
-                    int currScore = simpleMiniMaxScorer(state, nDepth - 1, false);
-                    if (currScore > bestScore) {
-                        bestScore = currScore;
-                    }
+                    bestScore = Math.max(bestScore, simpleMiniMaxScorer(state, nDepth - 1, false));
                 }
             }
             else {                  // current player is Min
                 bestScore = Integer.MAX_VALUE;
                 for (ReversiBoardState state : allPossibleMoves) {
-                    // next level is Min
-                    int currScore = simpleMiniMaxScorer(state, nDepth - 1, true);
-                    if (currScore < bestScore) {
-                        bestScore = currScore;
-                    }
+                    // next level is Max
+                    bestScore = Math.min(bestScore, simpleMiniMaxScorer(state, nDepth - 1, true));
                 }
             }
         }
@@ -93,10 +154,6 @@ public class MiniMaxLogic {
 
         return bestScore;
     }
-
-//    private boolean isCurrentPlayerMax(ReversiBoardState currentState) {
-//        return ( (bIsBlackMax && currentState.bIsBlackMove) || (!bIsBlackMax && !currentState.bIsBlackMove));
-//    }
 
     /**
      *  this is a combination of actions(s) and results(s.a) - we don't think there is a need to separate them
@@ -138,14 +195,16 @@ public class MiniMaxLogic {
                 if (inBounds) {
                     if ((row == i + horInterval && col == j + verInterval)
                             || currentBoard[row][col] == ReversiConstants.CubeStates.none){
+                        // means it didn't move at all
                         continue;
                     }
                     // if got here - changes were made
                     movesWereMade = true;
+                    byte value = (byte) (bCurrentPlayerIsBlack ? 2 : 1);
                     while (row != i || col != j) {
                         row -= horInterval;
                         col -= verInterval;
-                        optionalBoard[row][col] = (byte) (bCurrentPlayerIsBlack ? 2 : 1);
+                        optionalBoard[row][col] = value;
                     }
                 }
             }
@@ -156,18 +215,14 @@ public class MiniMaxLogic {
     private static byte[][] deepCopyMatrix(byte[][] currentBoard) {
         if (currentBoard == null)
             return null;
-        byte[][] result = new byte[ReversiConstants.BoardSize.boardHeight][];
-        for (int r = 0; r < currentBoard.length; r++) {
-            result[r] = Arrays.copyOf(currentBoard[r],ReversiConstants.BoardSize.boardWidth);
+        byte[][] result = new byte[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
+        for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row++) {
+            for (int col = 0; col < ReversiConstants.BoardSize.boardWidth; col++) {
+                result[row][col] = currentBoard[row][col];
+            }
         }
         return result;
     }
-//
-//    private boolean terminal (ReversiBoardState currentState) {
-//        boolean result = false;
-//
-//        return result;
-//    }
 
     private int utility(ReversiBoardState currentState) {
         int result = 0;
