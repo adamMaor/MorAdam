@@ -10,14 +10,15 @@ public class MiniMaxLogic {
 
     ReversiBoardState initialState;
     ArrayList<ReversiBoardState> nextAvailableMovesList;
-    boolean bIsBlackMax = true; // this will be initialized and is for player(s)
-    int nDepth = 4;
+    boolean bIsBlackMax; // this will be initialized and is for player(s)
+    int nDepth;
 
     public MiniMaxLogic(ReversiBoardState initialState, int nDepth, ArrayList<ReversiBoardState> nextAvailableMovesList) {
         this.initialState = initialState;
         this.nextAvailableMovesList = nextAvailableMovesList;
         this.bIsBlackMax = initialState.bIsBlackMove;
         this.nDepth = nDepth;
+//        System.out.println("Minimax init - available moves = " + nextAvailableMovesList.size() + ", Max is black ? " + bIsBlackMax + ", Depth is: " + nDepth);
     }
 
     public ReversiBoardState launchMiniMax(boolean isAlphaBeta)
@@ -29,17 +30,16 @@ public class MiniMaxLogic {
         else {
             bestBoard =  simpleMiniMax(initialState, nDepth);
         }
-        System.gc();
         return bestBoard;
     }
 
     public ReversiBoardState simpleMiniMax(ReversiBoardState currentState, int nDepth) {
         ReversiBoardState nextState = null;
-        if (nDepth == 0 || terminal(currentState)) {
+        if (nDepth == 0) {
             return currentState;
         }
         if (nextAvailableMovesList.size() > 0) {
-            System.out.println("Minimax start - available moves = " + nextAvailableMovesList.size());
+
             // we know that first player is Max
             int bestScore = Integer.MIN_VALUE;
             for (ReversiBoardState state : nextAvailableMovesList) {
@@ -54,12 +54,11 @@ public class MiniMaxLogic {
         else { // no moves available - not supposed to happen - will be checked in Logic
             // will return null
         }
-
         return nextState;
     }
 
     private int simpleMiniMaxScorer (ReversiBoardState currentState, int nDepth, boolean bIsCurrentMax) {
-        if (nDepth == 0 || terminal(currentState)) {
+        if (nDepth == 0 /*|| terminal(currentState)*/) {
             return utility(currentState);
         }
         ArrayList<ReversiBoardState> allPossibleMoves = allResults(currentState);
@@ -88,16 +87,16 @@ public class MiniMaxLogic {
             }
         }
         else  { // no legal moves for this player - change player and return the next score
-            currentState.bIsBlackMove = !currentState.bIsBlackMove;
-            return simpleMiniMaxScorer(currentState, nDepth - 1 , !bIsCurrentMax);
+            ReversiBoardState newState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
+            return simpleMiniMaxScorer(newState, nDepth - 1 , !bIsCurrentMax);
         }
-        System.gc();
+
         return bestScore;
     }
 
-    private boolean isCurrentPlayerMax(ReversiBoardState currentState) {
-        return ( (bIsBlackMax && currentState.bIsBlackMove) || (!bIsBlackMax && !currentState.bIsBlackMove));
-    }
+//    private boolean isCurrentPlayerMax(ReversiBoardState currentState) {
+//        return ( (bIsBlackMax && currentState.bIsBlackMove) || (!bIsBlackMax && !currentState.bIsBlackMove));
+//    }
 
     /**
      *  this is a combination of actions(s) and results(s.a) - we don't think there is a need to separate them
@@ -163,12 +162,12 @@ public class MiniMaxLogic {
         }
         return result;
     }
-
-    private boolean terminal (ReversiBoardState currentState) {
-        boolean result = false;
-
-        return result;
-    }
+//
+//    private boolean terminal (ReversiBoardState currentState) {
+//        boolean result = false;
+//
+//        return result;
+//    }
 
     private int utility(ReversiBoardState currentState) {
         int result = 0;
