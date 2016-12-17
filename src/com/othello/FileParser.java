@@ -52,7 +52,6 @@ public class FileParser {
                 String[] currParams = words.get(wordIndex++).split(" ");
                 int seqLength = Integer.parseInt(currParams[0]);
                 int value = Integer.parseInt(currParams[1]);
-//                System.out.println("length: " + seqLength + ", value: " + value);
                 int currColIndex = col;
                 for (; currColIndex < col + seqLength; currColIndex++) {
                     byteArray[row][currColIndex] = (byte)value;
@@ -66,6 +65,7 @@ public class FileParser {
             }
             if (words.get(wordIndex).equals("end") == false) {
                 System.out.println("An Error has occurred in file parsing, check legality of file lines");
+                return null;
             }
             else { currentState = new ReversiBoardState(byteArray,isBlackTurn); }
         }

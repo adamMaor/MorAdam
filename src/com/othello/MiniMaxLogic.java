@@ -1,7 +1,7 @@
 package com.othello;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by Adam on 15/12/2016.
@@ -12,29 +12,34 @@ public class MiniMaxLogic {
     private ArrayList<ReversiBoardState> nextAvailableMovesList;
     private MovesCache movesCache;
     boolean bIsBlackMax; // this will be initialized and is for player(s)
-    int nDepth;
+    int nInitDepth;
     int hits;
     int misses;
+    private HashMap<String,Boolean> blackPlayerHeuristicsMap;
+    private HashMap<String,Boolean> whitePlayerHeuristicsMap;
 
-    public MiniMaxLogic(ReversiBoardState initialState, int nDepth, ArrayList<ReversiBoardState> nextAvailableMovesList, MovesCache movesCache) {
+    public MiniMaxLogic(ReversiBoardState initialState, int nInitDepth, ArrayList<ReversiBoardState> nextAvailableMovesList, MovesCache movesCache,
+                        HashMap<String,Boolean> blackPlayerHeuristicsMap, HashMap<String,Boolean> whitePlayerHeuristicsMap) {
         this.initialState = initialState;
         this.nextAvailableMovesList = nextAvailableMovesList;
         this.movesCache = movesCache;
         this.bIsBlackMax = initialState.bIsBlackMove;
-        this.nDepth = nDepth;
+        this.nInitDepth = nInitDepth;
+        this.blackPlayerHeuristicsMap = blackPlayerHeuristicsMap;
+        this.whitePlayerHeuristicsMap = whitePlayerHeuristicsMap;
         hits = misses = 0;
 //        movesCache.write(initialState,nextAvailableMovesList);
-//        System.out.println("Minimax init - available moves = " + nextAvailableMovesList.size() + ", Max is black ? " + bIsBlackMax + ", Depth is: " + nDepth);
+//        System.out.println("Minimax init - available moves = " + nextAvailableMovesList.size() + ", Max is black ? " + bIsBlackMax + ", Depth is: " + nInitDepth);
     }
 
     public ReversiBoardState launchMiniMax(boolean isAlphaBeta)
     {
         ReversiBoardState bestBoard;
         if (isAlphaBeta) {
-            bestBoard = alphaBetaMiniMax(initialState, nDepth);
+            bestBoard = alphaBetaMiniMax(initialState, nInitDepth);
         }
         else {
-            bestBoard = simpleMiniMax(initialState, nDepth);
+            bestBoard = simpleMiniMax(initialState, nInitDepth);
         }
         if (movesCache != null) {
 //          System.out.println("hits:  " + hits + ", misses: " + misses);
@@ -44,7 +49,6 @@ public class MiniMaxLogic {
         }
         return bestBoard;
     }
-
 
     public ReversiBoardState alphaBetaMiniMax(ReversiBoardState currentState, int nDepth) {
         ReversiBoardState nextState = null;
@@ -74,11 +78,9 @@ public class MiniMaxLogic {
 
     private int alphaBetaMiniMaxScorer (ReversiBoardState currentState, int nDepth, Integer alpha, Integer beta, boolean bIsCurrentMax) {
         if (nDepth == 0) {
-            int score = utility(currentState);
-            return score;
+            return utility(currentState);
         }
-        ArrayList<ReversiBoardState> allPossibleMoves = (movesCache != null) ?  allResultsCached(currentState) : allResults(currentState);
-
+        ArrayList<ReversiBoardState> allPossibleMoves = (movesCache != null) ?  allResultsCached(currentState, nInitDepth - nDepth) : allResults(currentState);
         int bestScore;
         if (allPossibleMoves.size() > 0) {
             if (bIsCurrentMax) {  // current player is Max
@@ -132,7 +134,7 @@ public class MiniMaxLogic {
         if (nDepth == 0) {
             return utility(currentState);
         }
-        ArrayList<ReversiBoardState> allPossibleMoves = (movesCache != null) ?  allResultsCached(currentState) : allResults(currentState);
+        ArrayList<ReversiBoardState> allPossibleMoves = (movesCache != null) ?  allResultsCached(currentState, nInitDepth - nDepth) : allResults(currentState);
         int bestScore;
         if (allPossibleMoves.size() > 0) {
             if (bIsCurrentMax) {     // current player is Max
@@ -183,12 +185,14 @@ public class MiniMaxLogic {
      * CACHE Version!!!
      * this is a combination of actions(s) and results(s.a) - we don't think there is a need to separate them
      */
-    private ArrayList<ReversiBoardState> allResultsCached(ReversiBoardState currentState) {
+    private ArrayList<ReversiBoardState> allResultsCached(ReversiBoardState currentState, int currDepth) {
         ArrayList<ReversiBoardState> allResults = movesCache.read(currentState);  // try to get from cache
         if (allResults == null) {  // if not in cache do the following
             misses++;
             allResults = allResults(currentState);      // use regular function
-            movesCache.write(currentState, allResults); // write to cache
+            if (currDepth < ReversiConstants.Performance.maxCacheSize) {
+                movesCache.write(currentState, allResults); // write to cache
+            }
         }
         else {
             hits++;
@@ -245,10 +249,12 @@ public class MiniMaxLogic {
 
     private int utility(ReversiBoardState currentState) {
         int result = 0;
-        result += 10 * h1(currentState);
-        result += 30 * h2(currentState);
-//        result += 10 * h3(currentState);
-//        result += 10 * h4(currentState);
+        HashMap<String, Boolean> heuristicSelectionMap = bIsBlackMax ? blackPlayerHeuristicsMap : whitePlayerHeuristicsMap;
+        result += heuristicSelectionMap.get("h1") ? 10 * h1(currentState) : 0;
+        result += heuristicSelectionMap.get("h2") ? 40 * h2(currentState) : 0;
+//        result += heuristicSelectionMap.get("h3") ? 10 * h3(currentState) : 0;
+//        result += heuristicSelectionMap.get("h4") ? 10 * h4(currentState) : 0;
+
         return result;
     }
 
@@ -305,9 +311,9 @@ public class MiniMaxLogic {
         int nextPlayerMoves;
         if (movesCache != null)
         {
-            currentPlayerMoves = allResultsCached(currentState).size();
+            currentPlayerMoves = allResultsCached(currentState, 0).size();
             ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
-            nextPlayerMoves = allResultsCached(nextState).size();
+            nextPlayerMoves = allResultsCached(nextState, 0).size();
         }
         else {
             currentPlayerMoves = allResults(currentState).size();

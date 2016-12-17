@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class SettingsDialog extends JDialog {
     private JPanel contentPane;
@@ -23,6 +24,14 @@ public class SettingsDialog extends JDialog {
     private JCheckBox showLastMoveBlueCheckBox;
     private JCheckBox useAlphaBetaPruningCheckBox;
     private JCheckBox useCacheMaxDepthCheckBox;
+    private JCheckBox blackh1CheckBox;
+    private JCheckBox whiteh1CheckBox;
+    private JCheckBox blackh2CheckBox;
+    private JCheckBox whiteh2CheckBox;
+    private JCheckBox blackh3CheckBox;
+    private JCheckBox whiteh3CheckBox;
+    private JCheckBox blackh4CheckBox;
+    private JCheckBox whiteh4CheckBox;
 
     private static FileParser fileParser;
     private static GameLogic gameLogic;
@@ -102,6 +111,18 @@ public class SettingsDialog extends JDialog {
         boolean bIsCreatedHere = createdByMeCheckBox.isSelected();
         byte whitePlayerType = (byte)whiteCombo.getSelectedIndex();
         byte blackPlayerType = (byte)blackCombo.getSelectedIndex();
+        HashMap<String,Boolean> blackPlayerHeuristicsMap = new HashMap<String, Boolean>();
+        // fill black player heuristics
+        blackPlayerHeuristicsMap.put("h1", blackh1CheckBox.isSelected());
+        blackPlayerHeuristicsMap.put("h2", blackh2CheckBox.isSelected());
+        blackPlayerHeuristicsMap.put("h3", blackh3CheckBox.isSelected());
+        blackPlayerHeuristicsMap.put("h4", blackh4CheckBox.isSelected());
+        HashMap<String,Boolean> whitePlayerHeuristicsMap = new HashMap<String, Boolean>();
+        // fill white player heuristics
+        whitePlayerHeuristicsMap.put("h1", whiteh1CheckBox.isSelected());
+        whitePlayerHeuristicsMap.put("h2", whiteh2CheckBox.isSelected());
+        whitePlayerHeuristicsMap.put("h3", whiteh3CheckBox.isSelected());
+        whitePlayerHeuristicsMap.put("h4", whiteh4CheckBox.isSelected());
         int depth = (Integer) depthSpinner.getValue();
         boolean isAlphaBeta = useAlphaBetaPruningCheckBox.isSelected();
         boolean useCache = useCacheMaxDepthCheckBox.isSelected();
@@ -116,7 +137,7 @@ public class SettingsDialog extends JDialog {
         }
 
         fileParser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, isAlphaBeta, useCache, delayTime, isShowAvailableMoves, isShowLastMove);
+        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, isAlphaBeta, useCache, delayTime, isShowAvailableMoves, isShowLastMove, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
         gameGUI.init(gameLogic, whitePlayerType, blackPlayerType);
         dispose();
     }

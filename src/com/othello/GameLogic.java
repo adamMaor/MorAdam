@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by Adam on 09/12/2016.
@@ -16,6 +17,8 @@ public class GameLogic {
     ArrayList<ReversiBoardState> nextAvailableMovesList;
     private boolean bFirstPlayerWasBlack;
     private byte whitePlayerType, blackPlayerType;
+    private HashMap<String,Boolean> blackPlayerHeuristicsMap;
+    private HashMap<String,Boolean> whitePlayerHeuristicsMap;
     private int depth;
     private boolean bIsAlphaBeta;
     private boolean bIsCacheUsed;
@@ -28,10 +31,15 @@ public class GameLogic {
     private boolean bShowLastMove;
     private Long pcMoveTime;
     private int pcMoveCounter;
+    private boolean gameOver;
 
-    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, boolean useCache, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
+    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, boolean useCache,
+                     int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove,
+                     HashMap<String,Boolean> blackPlayerHeuristicsMap, HashMap<String,Boolean> whitePlayerHeuristicsMap) {
         this.whitePlayerType = whitePlayerType;
         this.blackPlayerType = blackPlayerType;
+        this.blackPlayerHeuristicsMap = blackPlayerHeuristicsMap;
+        this.whitePlayerHeuristicsMap = whitePlayerHeuristicsMap;
         this.depth = depth;
         this.bIsAlphaBeta = isAlphaBeta;
         this.bIsCacheUsed = useCache;
@@ -50,6 +58,7 @@ public class GameLogic {
         validateMove(currentState);
         refreshGui();
         bIsAutoPlayOn = false;
+        gameOver = false;
     }
 
     /**
@@ -64,26 +73,18 @@ public class GameLogic {
         switch (getGameStatus()) {
             case ReversiConstants.GameStatus.noMoreMoves:
                 endGameLogic();
-                break;
+                return;
             case ReversiConstants.GameStatus.currentPlayerCanPlay:
                 if (isCurrentPlayerPC()) {
-                    if (getPCMove() == true) {
-                        // PC has played - generate next move
+                    if (getPCMove() == true) {   // PC has played - generate next move
                         if (bIsAutoPlayOn) {
                             EventQueue.invokeLater(new Runnable() {
                                 @Override
-                                public void run() {
-                                    generateMove();
-
-                                }
-                            });
+                                public void run() { generateMove(); } });
                         }
                     }
-                    else {
-                        //ERROR - never supposed to happen due to GameStatus check !!!
-                    }
-                } // now check for other pc logic
-                else if (isCurrentPlayerOtherPC()) {
+                }
+                else if (isCurrentPlayerOtherPC()) {    // now check for other pc logic
 
                 }
                 // if non then waiting for user (Human) input - Do Nothing! just wait
@@ -125,22 +126,25 @@ public class GameLogic {
      * @param row the row on the gameGUI
      * @param col the column on the gameGUI
      */
-    public void getHumanMove(int row, int col) {
+    public void getHumanMove(final int row, final int col) {
         byte[][] optionalBoard = deepCopyMatrix(currentState.boardStateBeforeMove);
         checkMovesForPoint(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove, optionalBoard);
         if (!(Arrays.deepEquals(optionalBoard,currentState.boardStateBeforeMove ))) {
             changeTotalCurrentState(optionalBoard);
-            Timer timer = new Timer(30, new ActionListener() {
+            // this timer is set to allow GUI to repaint
+            Timer timer = new Timer(50, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                    if (bIsAutoPlayOn) {
-                        generateMove();
-                    }
+                        if (bIsAutoPlayOn) {
+                            EventQueue.invokeLater(new Runnable() {
+                                @Override
+                                public void run() { generateMove(); } });
+                        }
                     }
                 });
+            timer.setRepeats(false);    // Single Shot
             timer.start();
         }
-
     }
 
     public boolean getPCMove() {
@@ -148,16 +152,15 @@ public class GameLogic {
         pcMoveCounter++;
         boolean bRes = true;
         MovesCache cache = bIsCacheUsed ? movesCache : null;
-        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList, cache);
+        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList, cache, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
         ReversiBoardState nextState = miniMaxSolver.launchMiniMax(bIsAlphaBeta);
         if (nextState == null) {
             bRes = false;
         }
         else {
             changeTotalCurrentState(nextState);
-            // sleep for the delay time specified in settings
             if (bIsAutoPlayOn) {
-                try {
+                try {   // sleep for the delay time specified in settings
                     startTime += delayTime;
                     Thread.sleep(delayTime);
                 } catch (InterruptedException e) {
@@ -236,13 +239,15 @@ public class GameLogic {
     private boolean validateMove(ReversiBoardState state) {
         nextAvailableMovesList.clear();
         nextAvailableMovesList = getAvailableMoves(state);
-
         return nextAvailableMovesList.size() > 0;
     }
 
     private void endGameLogic() {
-        gameGUI.gameIsOver();
-        System.exit(0);
+        if (gameOver == false) {
+            this.gameOver = true;
+            gameGUI.gameIsOver();
+            System.exit(0);
+        }
     }
 
     private void changeOnlyPlayer() {
