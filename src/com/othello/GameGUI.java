@@ -7,7 +7,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
- * Created by Adam on 04/12/2016.
+ * Main Gui Class
+ * Handles all GUI paints and Events
  */
 public class GameGUI {
     private JPanel mainPanel;
@@ -147,7 +148,8 @@ public class GameGUI {
 
     public void gameIsOver() {
         String strRes = currentBlack > currentWhite ? "Black Wins !!! " : currentBlack == currentWhite ? "It Was A Tie !" : "White Wins !!!";
-        strRes += "\n" + "The Score Was: Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite;
+        strRes += "\n" + "The Score Was: Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite + "\n";
+        strRes += gameLogic.getGameSum();
         JOptionPane.showMessageDialog(null, "Game Is Over, " + strRes);
     }
 

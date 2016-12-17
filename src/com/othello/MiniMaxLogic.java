@@ -23,7 +23,7 @@ public class MiniMaxLogic {
         this.bIsBlackMax = initialState.bIsBlackMove;
         this.nDepth = nDepth;
         hits = misses = 0;
-        movesCache.write(initialState,nextAvailableMovesList);
+//        movesCache.write(initialState,nextAvailableMovesList);
 //        System.out.println("Minimax init - available moves = " + nextAvailableMovesList.size() + ", Max is black ? " + bIsBlackMax + ", Depth is: " + nDepth);
     }
 
@@ -36,7 +36,12 @@ public class MiniMaxLogic {
         else {
             bestBoard = simpleMiniMax(initialState, nDepth);
         }
-        System.out.println("hits:  " + hits + ", misses: " + misses);
+        if (movesCache != null) {
+//          System.out.println("hits:  " + hits + ", misses: " + misses);
+//          System.out.print("cleaning cache...");
+            movesCache.cleanCache(bestBoard);
+//          System.out.println("...Done");
+        }
         return bestBoard;
     }
 
@@ -64,18 +69,16 @@ public class MiniMaxLogic {
                 }
             }
         }
-        else { // no moves available - not supposed to happen - will be checked in Logic
-            // will return null
-        }
         return nextState;
     }
 
     private int alphaBetaMiniMaxScorer (ReversiBoardState currentState, int nDepth, Integer alpha, Integer beta, boolean bIsCurrentMax) {
-        if (nDepth == 0 /*|| terminal(currentState)*/) {
+        if (nDepth == 0) {
             int score = utility(currentState);
             return score;
         }
-        ArrayList<ReversiBoardState> allPossibleMoves = allResults(currentState);
+        ArrayList<ReversiBoardState> allPossibleMoves = (movesCache != null) ?  allResultsCached(currentState) : allResults(currentState);
+
         int bestScore;
         if (allPossibleMoves.size() > 0) {
             if (bIsCurrentMax) {  // current player is Max
@@ -113,11 +116,8 @@ public class MiniMaxLogic {
             return currentState;
         }
         if (nextAvailableMovesList.size() > 0) {
-
-            // we know that first player is Max
-            int bestScore = Integer.MIN_VALUE;
-            for (ReversiBoardState state : nextAvailableMovesList) {
-                // next level is Min
+            int bestScore = Integer.MIN_VALUE;   // we know that first player is Max
+            for (ReversiBoardState state : nextAvailableMovesList) { // next level is Min
                 int currScore = simpleMiniMaxScorer(state, nDepth - 1, false);
                 if (currScore > bestScore) {
                     bestScore = currScore;
@@ -125,32 +125,25 @@ public class MiniMaxLogic {
                 }
             }
         }
-        else { // no moves available - not supposed to happen - will be checked in Logic
-            // will return null
-        }
         return nextState;
     }
 
     private int simpleMiniMaxScorer (ReversiBoardState currentState, int nDepth, boolean bIsCurrentMax) {
-        if (nDepth == 0 /*|| terminal(currentState)*/) {
+        if (nDepth == 0) {
             return utility(currentState);
         }
-        ArrayList<ReversiBoardState> allPossibleMoves = allResults(currentState);
-
+        ArrayList<ReversiBoardState> allPossibleMoves = (movesCache != null) ?  allResultsCached(currentState) : allResults(currentState);
         int bestScore;
         if (allPossibleMoves.size() > 0) {
             if (bIsCurrentMax) {     // current player is Max
                 bestScore = Integer.MIN_VALUE;
-                for (ReversiBoardState state : allPossibleMoves) {
-                    // next level is Min
+                for (ReversiBoardState state : allPossibleMoves) { // next level is Min
                     bestScore = Math.max(bestScore, simpleMiniMaxScorer(state, nDepth - 1, false));
-                    // maybe try to delete from cache here...
                 }
             }
             else {                  // current player is Min
                 bestScore = Integer.MAX_VALUE;
-                for (ReversiBoardState state : allPossibleMoves) {
-                    // next level is Max
+                for (ReversiBoardState state : allPossibleMoves) { // next level is Max
                     bestScore = Math.min(bestScore, simpleMiniMaxScorer(state, nDepth - 1, true));
                 }
             }
@@ -159,7 +152,6 @@ public class MiniMaxLogic {
             ReversiBoardState newState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
             return simpleMiniMaxScorer(newState, nDepth - 1 , !bIsCurrentMax);
         }
-
         return bestScore;
     }
 
@@ -186,38 +178,23 @@ public class MiniMaxLogic {
         }
         return allResults;
     }
-    // CACHE Version!!!
-//    private ArrayList<ReversiBoardState> allResults(ReversiBoardState currentState) {
-//        // try to get from cache
-//        ArrayList<ReversiBoardState> allResults = movesCache.read(currentState);
-////        ArrayList<ReversiBoardState> allResults = null;
-//        // if not do the following
-//        if (allResults == null)
-//        {
-//            misses++;
-//            allResults = new ArrayList<ReversiBoardState>();
-//            byte[][] currentBoard = currentState.boardStateBeforeMove;
-//            boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
-//            byte[][] optionalBoard = deepCopyMatrix(currentBoard);
-//            for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
-//                for (int j = 0; j < ReversiConstants.BoardSize.boardWidth ; j++) {
-//                    if (currentBoard[i][j] == ReversiConstants.CubeStates.none) {
-//                        boolean areMoves = checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
-//                        if (areMoves) {
-//                            allResults.add(new ReversiBoardState(optionalBoard,!bCurrentPlayerIsBlack));
-//                            optionalBoard = deepCopyMatrix(currentBoard);
-//                        }
-//                    }
-//                }
-//            }
-//            // write to cache
-//            movesCache.write(currentState, allResults);
-//        }
-//        else {
-//            hits++;
-//        }
-//        return allResults;
-//    }
+
+    /**
+     * CACHE Version!!!
+     * this is a combination of actions(s) and results(s.a) - we don't think there is a need to separate them
+     */
+    private ArrayList<ReversiBoardState> allResultsCached(ReversiBoardState currentState) {
+        ArrayList<ReversiBoardState> allResults = movesCache.read(currentState);  // try to get from cache
+        if (allResults == null) {  // if not in cache do the following
+            misses++;
+            allResults = allResults(currentState);      // use regular function
+            movesCache.write(currentState, allResults); // write to cache
+        }
+        else {
+            hits++;
+        }
+        return allResults;
+    }
 
 
     private static boolean checkMovesForPoint(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
@@ -270,6 +247,8 @@ public class MiniMaxLogic {
         int result = 0;
         result += 10 * h1(currentState);
         result += 30 * h2(currentState);
+//        result += 10 * h3(currentState);
+//        result += 10 * h4(currentState);
         return result;
     }
 
@@ -319,6 +298,25 @@ public class MiniMaxLogic {
             return whiteCorner - blackCorner;
         }
     }
+
+    /** this is number of legal moves heuristic **/
+    private int h3(ReversiBoardState currentState) {
+        int currentPlayerMoves;
+        int nextPlayerMoves;
+        if (movesCache != null)
+        {
+            currentPlayerMoves = allResultsCached(currentState).size();
+            ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
+            nextPlayerMoves = allResultsCached(nextState).size();
+        }
+        else {
+            currentPlayerMoves = allResults(currentState).size();
+            ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
+            nextPlayerMoves = allResults(nextState).size();
+        }
+        return currentPlayerMoves - nextPlayerMoves;
+    }
+
 
     private int sumAllWhites(ReversiBoardState currentState){
         int count = 0;

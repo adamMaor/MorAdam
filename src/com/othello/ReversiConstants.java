@@ -39,5 +39,9 @@ public class ReversiConstants {
         public static final byte noMovesForCurrentPlayer = 1;
         public static final byte currentPlayerCanPlay = 2;
     }
+
+    public static class Performance {
+        public static final byte maxCacheSize = 7;
+    }
 }
 

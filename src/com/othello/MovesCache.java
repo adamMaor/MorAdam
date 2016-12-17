@@ -9,28 +9,40 @@ import java.util.HashMap;
 public class MovesCache {
 
     private HashMap<ReversiBoardState, ArrayList<ReversiBoardState>> cacheMap;
-    private HashMap<ReversiBoardState, Long> lruMap;
 
     public MovesCache() {
         cacheMap = new HashMap<ReversiBoardState, ArrayList<ReversiBoardState>>();
-        lruMap = new HashMap<ReversiBoardState, Long>();
     }
 
     public boolean write(ReversiBoardState state, ArrayList<ReversiBoardState> possibleMovesList) {
-//        System.out.print("writing hash func: " + state.hashCode() + ", ");
-        if (cacheMap.put(state, possibleMovesList) != null) {
-//            System.out.println("hash size: " + cacheMap.size() + ", keys:" + cacheMap.keySet().size() + ", ");
-            return true;
-        }
-        return false;
+        return (cacheMap.put(state, possibleMovesList) != null);
     }
 
     public ArrayList<ReversiBoardState> read(ReversiBoardState currBoardState) {
         return cacheMap.get(currBoardState);
     }
 
-    public void cleanCache(){
-        // will use LRU to clean val from Map
+    /**
+     * needs to be called after a move was selected
+     * will keep only the possible paths from the chosen move and remove all else
+     * @param chosenState
+     */
+    public void cleanCache(ReversiBoardState chosenState){
+        HashMap<ReversiBoardState, ArrayList<ReversiBoardState>> tempCacheMap = new HashMap<ReversiBoardState, ArrayList<ReversiBoardState>>();
+        saveAllPossibleSubMoves(chosenState, tempCacheMap, 0);
+        cacheMap.clear();
+        cacheMap.putAll(tempCacheMap);
+    }
 
+    private void saveAllPossibleSubMoves(ReversiBoardState chosenState, HashMap<ReversiBoardState, ArrayList<ReversiBoardState>> tempCacheMap, int currentDepth) {
+        if (currentDepth < ReversiConstants.Performance.maxCacheSize) {
+            ArrayList<ReversiBoardState> chosenPossibleMoves = cacheMap.get(chosenState);
+            if (chosenPossibleMoves != null) {
+                tempCacheMap.put(chosenState, chosenPossibleMoves);
+                for (ReversiBoardState possibleMove : chosenPossibleMoves) {
+                    saveAllPossibleSubMoves(possibleMove, tempCacheMap, ++currentDepth);
+                }
+            }
+        }
     }
 }

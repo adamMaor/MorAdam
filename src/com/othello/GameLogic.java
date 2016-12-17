@@ -14,9 +14,11 @@ public class GameLogic {
     private ReversiBoardState lastState;
     public static ReversiBoardState currentState;
     ArrayList<ReversiBoardState> nextAvailableMovesList;
+    private boolean bFirstPlayerWasBlack;
     private byte whitePlayerType, blackPlayerType;
     private int depth;
     private boolean bIsAlphaBeta;
+    private boolean bIsCacheUsed;
     private int delayTime;
     private GameGUI gameGUI;
     private FileParser fileParser;
@@ -24,14 +26,18 @@ public class GameLogic {
     private boolean bIsAutoPlayOn;
     private boolean bShowAvailableMoves;
     private boolean bShowLastMove;
+    private Long pcMoveTime;
+    private int pcMoveCounter;
 
-    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
+    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, boolean useCache, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
         this.whitePlayerType = whitePlayerType;
         this.blackPlayerType = blackPlayerType;
         this.depth = depth;
         this.bIsAlphaBeta = isAlphaBeta;
+        this.bIsCacheUsed = useCache;
         this.fileParser = fileParser;
         this.currentState = fileParser.getNextState();
+        bFirstPlayerWasBlack = currentState.bIsBlackMove;
         this.movesCache = new MovesCache();
         this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
         this.lastState = currentState;
@@ -39,6 +45,8 @@ public class GameLogic {
         this.delayTime = delayTime;
         this.bShowAvailableMoves = isShowAvailableMoves;
         this.bShowLastMove = isShowLastMove;
+        this.pcMoveTime = new Long(0);
+        this.pcMoveCounter = 0;
         validateMove(currentState);
         refreshGui();
         bIsAutoPlayOn = false;
@@ -136,22 +144,29 @@ public class GameLogic {
     }
 
     public boolean getPCMove() {
-
-        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList, movesCache);
+        Long startTime = System.currentTimeMillis();
+        pcMoveCounter++;
+        boolean bRes = true;
+        MovesCache cache = bIsCacheUsed ? movesCache : null;
+        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList, cache);
         ReversiBoardState nextState = miniMaxSolver.launchMiniMax(bIsAlphaBeta);
         if (nextState == null) {
-            return false;
+            bRes = false;
         }
-        changeTotalCurrentState(nextState);
-        // sleep for the delay time specified in settings
-        if (bIsAutoPlayOn) {
-            try {
-                Thread.sleep(delayTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        else {
+            changeTotalCurrentState(nextState);
+            // sleep for the delay time specified in settings
+            if (bIsAutoPlayOn) {
+                try {
+                    startTime += delayTime;
+                    Thread.sleep(delayTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        return true;
+        pcMoveTime += System.currentTimeMillis() - startTime;
+        return bRes;
     }
 
     private ArrayList<ReversiBoardState> getAvailableMoves(ReversiBoardState currentState) {
@@ -273,5 +288,13 @@ public class GameLogic {
 
     public void setAutoPlay(boolean selected) {
         bIsAutoPlayOn = selected;
+    }
+
+    public String getGameSum() {
+        String res = "Game Summary:\n";
+        res += "First player was: " + (bFirstPlayerWasBlack ? "Black" : "White") + "\n";
+        res += "Average Pc Move Time: " + pcMoveTime / pcMoveCounter + " miliSeconds\n";
+        res += "Depth: " + depth + ", Used Alpha-Beta? " + bIsAlphaBeta + ", Used Cache? "+ bIsCacheUsed + "\n";
+        return res;
     }
 }
