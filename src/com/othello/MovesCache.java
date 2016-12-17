@@ -17,7 +17,9 @@ public class MovesCache {
     }
 
     public boolean write(ReversiBoardState state, ArrayList<ReversiBoardState> possibleMovesList) {
+//        System.out.print("writing hash func: " + state.hashCode() + ", ");
         if (cacheMap.put(state, possibleMovesList) != null) {
+//            System.out.println("hash size: " + cacheMap.size() + ", keys:" + cacheMap.keySet().size() + ", ");
             return true;
         }
         return false;

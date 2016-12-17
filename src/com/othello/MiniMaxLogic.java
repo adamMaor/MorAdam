@@ -8,16 +8,22 @@ import java.util.Arrays;
  */
 public class MiniMaxLogic {
 
-    ReversiBoardState initialState;
-    ArrayList<ReversiBoardState> nextAvailableMovesList;
+    private ReversiBoardState initialState;
+    private ArrayList<ReversiBoardState> nextAvailableMovesList;
+    private MovesCache movesCache;
     boolean bIsBlackMax; // this will be initialized and is for player(s)
     int nDepth;
+    int hits;
+    int misses;
 
-    public MiniMaxLogic(ReversiBoardState initialState, int nDepth, ArrayList<ReversiBoardState> nextAvailableMovesList) {
+    public MiniMaxLogic(ReversiBoardState initialState, int nDepth, ArrayList<ReversiBoardState> nextAvailableMovesList, MovesCache movesCache) {
         this.initialState = initialState;
         this.nextAvailableMovesList = nextAvailableMovesList;
+        this.movesCache = movesCache;
         this.bIsBlackMax = initialState.bIsBlackMove;
         this.nDepth = nDepth;
+        hits = misses = 0;
+        movesCache.write(initialState,nextAvailableMovesList);
 //        System.out.println("Minimax init - available moves = " + nextAvailableMovesList.size() + ", Max is black ? " + bIsBlackMax + ", Depth is: " + nDepth);
     }
 
@@ -30,6 +36,7 @@ public class MiniMaxLogic {
         else {
             bestBoard = simpleMiniMax(initialState, nDepth);
         }
+        System.out.println("hits:  " + hits + ", misses: " + misses);
         return bestBoard;
     }
 
@@ -137,6 +144,7 @@ public class MiniMaxLogic {
                 for (ReversiBoardState state : allPossibleMoves) {
                     // next level is Min
                     bestScore = Math.max(bestScore, simpleMiniMaxScorer(state, nDepth - 1, false));
+                    // maybe try to delete from cache here...
                 }
             }
             else {                  // current player is Min
@@ -160,10 +168,8 @@ public class MiniMaxLogic {
      *
      **/
     private ArrayList<ReversiBoardState> allResults(ReversiBoardState currentState) {
-        // try to get from cache
-
-        // if not do the following
-        ArrayList<ReversiBoardState> allResults = new ArrayList<ReversiBoardState>();
+        ArrayList<ReversiBoardState> allResults = null;
+        allResults = new ArrayList<ReversiBoardState>();
         byte[][] currentBoard = currentState.boardStateBeforeMove;
         boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
         byte[][] optionalBoard = deepCopyMatrix(currentBoard);
@@ -178,10 +184,41 @@ public class MiniMaxLogic {
                 }
             }
         }
-
-        // write to cache
         return allResults;
     }
+    // CACHE Version!!!
+//    private ArrayList<ReversiBoardState> allResults(ReversiBoardState currentState) {
+//        // try to get from cache
+//        ArrayList<ReversiBoardState> allResults = movesCache.read(currentState);
+////        ArrayList<ReversiBoardState> allResults = null;
+//        // if not do the following
+//        if (allResults == null)
+//        {
+//            misses++;
+//            allResults = new ArrayList<ReversiBoardState>();
+//            byte[][] currentBoard = currentState.boardStateBeforeMove;
+//            boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
+//            byte[][] optionalBoard = deepCopyMatrix(currentBoard);
+//            for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
+//                for (int j = 0; j < ReversiConstants.BoardSize.boardWidth ; j++) {
+//                    if (currentBoard[i][j] == ReversiConstants.CubeStates.none) {
+//                        boolean areMoves = checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
+//                        if (areMoves) {
+//                            allResults.add(new ReversiBoardState(optionalBoard,!bCurrentPlayerIsBlack));
+//                            optionalBoard = deepCopyMatrix(currentBoard);
+//                        }
+//                    }
+//                }
+//            }
+//            // write to cache
+//            movesCache.write(currentState, allResults);
+//        }
+//        else {
+//            hits++;
+//        }
+//        return allResults;
+//    }
+
 
     private static boolean checkMovesForPoint(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
         byte oppositePlayer = (byte) (bCurrentPlayerIsBlack ? 1 : 2);

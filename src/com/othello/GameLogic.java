@@ -11,18 +11,19 @@ import java.util.Arrays;
  * Created by Adam on 09/12/2016.
  */
 public class GameLogic {
-    public static ReversiBoardState currentState = null;
-    private byte whitePlayerType = 0, blackPlayerType = 0;
-    private int depth = 4;
-    private boolean bIsAlphaBeta;
-    private int delayTime = 250;
+    private ReversiBoardState lastState;
+    public static ReversiBoardState currentState;
     ArrayList<ReversiBoardState> nextAvailableMovesList;
-    private GameGUI gameGUI = null;
-    private FileParser fileParser = null;
+    private byte whitePlayerType, blackPlayerType;
+    private int depth;
+    private boolean bIsAlphaBeta;
+    private int delayTime;
+    private GameGUI gameGUI;
+    private FileParser fileParser;
+    private MovesCache movesCache;
     private boolean bIsAutoPlayOn;
     private boolean bShowAvailableMoves;
     private boolean bShowLastMove;
-    private ReversiBoardState lastState;
 
     public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove) {
         this.whitePlayerType = whitePlayerType;
@@ -31,6 +32,7 @@ public class GameLogic {
         this.bIsAlphaBeta = isAlphaBeta;
         this.fileParser = fileParser;
         this.currentState = fileParser.getNextState();
+        this.movesCache = new MovesCache();
         this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
         this.lastState = currentState;
         this.gameGUI = gameGUI;
@@ -135,7 +137,7 @@ public class GameLogic {
 
     public boolean getPCMove() {
 
-        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList);
+        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList, movesCache);
         ReversiBoardState nextState = miniMaxSolver.launchMiniMax(bIsAlphaBeta);
         if (nextState == null) {
             return false;
