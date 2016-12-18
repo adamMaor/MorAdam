@@ -297,9 +297,9 @@ public class GameLogic {
 
     public String getGameSum() {
         String res = "Game Summary:\n";
-        res += "First player was: " + (bFirstPlayerWasBlack ? "Black" : "White") + "\n";
-        res += "Average Pc Move Time: " + pcMoveTime / pcMoveCounter + " miliSeconds\n";
-        res += "Depth: " + depth + ", Used Alpha-Beta? " + bIsAlphaBeta + ", Used Cache? "+ bIsCacheUsed + "\n";
+        res += "    First player was: " + (bFirstPlayerWasBlack ? "Black" : "White") + "\n";
+        res += "    Average Pc Move Time: " + pcMoveTime / pcMoveCounter + " milliSeconds\n";
+        res += "    Depth: " + depth + "\n    Used Alpha-Beta? " + bIsAlphaBeta + "\n    Used Cache? "+ bIsCacheUsed + "\n";
         return res;
     }
 }

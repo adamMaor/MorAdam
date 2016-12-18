@@ -43,5 +43,12 @@ public class ReversiConstants {
     public static class Performance {
         public static final byte maxCacheSize = 7;
     }
+
+    public static class HeuristicsWeight {
+        public static final byte  h1 = 10 ;
+        public static final byte  h2 = 25 ;
+        public static final byte  h3 = 10 ;
+        public static final byte  h4 = 10 ;
+    }
 }
 

@@ -32,6 +32,7 @@ public class MovesCache {
         saveAllPossibleSubMoves(chosenState, tempCacheMap, 0);
         cacheMap.clear();
         cacheMap.putAll(tempCacheMap);
+
     }
 
     private void saveAllPossibleSubMoves(ReversiBoardState chosenState, HashMap<ReversiBoardState, ArrayList<ReversiBoardState>> tempCacheMap, int currentDepth) {

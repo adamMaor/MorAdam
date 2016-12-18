@@ -32,6 +32,10 @@ public class SettingsDialog extends JDialog {
     private JCheckBox whiteh3CheckBox;
     private JCheckBox blackh4CheckBox;
     private JCheckBox whiteh4CheckBox;
+    private JLabel h1Label;
+    private JLabel h2Label;
+    private JLabel h3Label;
+    private JLabel h4Label;
 
     private static FileParser fileParser;
     private static GameLogic gameLogic;
@@ -42,22 +46,30 @@ public class SettingsDialog extends JDialog {
         this.gameGUI = gameGUI;
         this.gameLogic = gameLogic;
         this.fileParser = fileParser;
-
         setContentPane(contentPane);
         setTitle("Set your Reversi Game Up");
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        SpinnerModel depthModel = new SpinnerNumberModel(4, 1, 10, 1);
+        h1Label.setText("Disks Count (" + ReversiConstants.HeuristicsWeight.h1 + "): ");
+        h2Label.setText("Stability (" + ReversiConstants.HeuristicsWeight.h2 + "): ");
+        h3Label.setText("Mobility (" + ReversiConstants.HeuristicsWeight.h3 + "): ");
+        h4Label.setText("Frontiers (" + ReversiConstants.HeuristicsWeight.h4 + "): ");
+
+//        whiteCombo.setSelectedIndex(ReversiConstants.PlayerTypes.human);
+        whiteCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
+        blackCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
+        firstMoveCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
+
+
+        SpinnerModel depthModel = new SpinnerNumberModel(6, 1, 10, 1);
         depthSpinner.setModel(depthModel);
-
-        SpinnerModel DelayModel = new SpinnerNumberModel(250, 50, 1000, 50);
-        delaySpinner.setModel(DelayModel);
-
         JComponent editor = depthSpinner.getEditor();
         JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor)editor;
         spinnerEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
 
+        SpinnerModel DelayModel = new SpinnerNumberModel(0, 0, 1000, 50);
+        delaySpinner.setModel(DelayModel);
         JComponent editor2 = delaySpinner.getEditor();
         JSpinner.DefaultEditor delayEditor = (JSpinner.DefaultEditor)editor2;
         delayEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
@@ -88,6 +100,11 @@ public class SettingsDialog extends JDialog {
                 filePathField.setText(generateFile());
             }
         });
+
+
+
+
+
     }
 
     private String generateFile() {

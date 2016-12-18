@@ -1,5 +1,6 @@
 package com.othello;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,7 +35,7 @@ public class MiniMaxLogic {
 
     public ReversiBoardState launchMiniMax(boolean isAlphaBeta)
     {
-        ReversiBoardState bestBoard;
+        final ReversiBoardState bestBoard;
         if (isAlphaBeta) {
             bestBoard = alphaBetaMiniMax(initialState, nInitDepth);
         }
@@ -42,9 +43,15 @@ public class MiniMaxLogic {
             bestBoard = simpleMiniMax(initialState, nInitDepth);
         }
         if (movesCache != null) {
-//          System.out.println("hits:  " + hits + ", misses: " + misses);
-//          System.out.print("cleaning cache...");
-            movesCache.cleanCache(bestBoard);
+            Thread cleaner = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    movesCache.cleanCache(bestBoard);
+                }
+            });
+            cleaner.start();
+
+
 //          System.out.println("...Done");
         }
         return bestBoard;
@@ -188,14 +195,14 @@ public class MiniMaxLogic {
     private ArrayList<ReversiBoardState> allResultsCached(ReversiBoardState currentState, int currDepth) {
         ArrayList<ReversiBoardState> allResults = movesCache.read(currentState);  // try to get from cache
         if (allResults == null) {  // if not in cache do the following
-            misses++;
+//            misses++;
             allResults = allResults(currentState);      // use regular function
             if (currDepth < ReversiConstants.Performance.maxCacheSize) {
                 movesCache.write(currentState, allResults); // write to cache
             }
         }
         else {
-            hits++;
+//            hits++;
         }
         return allResults;
     }
@@ -218,7 +225,7 @@ public class MiniMaxLogic {
                 if (inBounds) {
                     if ((row == i + horInterval && col == j + verInterval)
                             || currentBoard[row][col] == ReversiConstants.CubeStates.none){
-                        // means it didn't move at all
+                        // means it didn't move at all or got to empty cube
                         continue;
                     }
                     // if got here - changes were made
@@ -250,10 +257,15 @@ public class MiniMaxLogic {
     private int utility(ReversiBoardState currentState) {
         int result = 0;
         HashMap<String, Boolean> heuristicSelectionMap = bIsBlackMax ? blackPlayerHeuristicsMap : whitePlayerHeuristicsMap;
-        result += heuristicSelectionMap.get("h1") ? 10 * h1(currentState) : 0;
-        result += heuristicSelectionMap.get("h2") ? 40 * h2(currentState) : 0;
-//        result += heuristicSelectionMap.get("h3") ? 10 * h3(currentState) : 0;
-//        result += heuristicSelectionMap.get("h4") ? 10 * h4(currentState) : 0;
+//        System.out.print("0+h1: " + (result += heuristicSelectionMap.get("h1") ? ReversiConstants.HeuristicsWeight.h1 * h1(currentState) : 0));
+//        System.out.print(" +h2: " + (result += heuristicSelectionMap.get("h2") ? ReversiConstants.HeuristicsWeight.h2 * h2(currentState) : 0));
+////        result += heuristicSelectionMap.get("h3") ? ReversiConstants.HeuristicsWeight.h3 * h3(currentState) : 0;
+//        System.out.println(" +h4: " +(result += heuristicSelectionMap.get("h4") ? ReversiConstants.HeuristicsWeight.h4 * h4(currentState) : 0));
+
+        result += heuristicSelectionMap.get("h1") ? ReversiConstants.HeuristicsWeight.h1 * h1(currentState) : 0;
+        result += heuristicSelectionMap.get("h2") ? ReversiConstants.HeuristicsWeight.h2 * h2(currentState) : 0;
+//        result += heuristicSelectionMap.get("h3") ? ReversiConstants.HeuristicsWeight.h3 * h3(currentState) : 0;
+        result += heuristicSelectionMap.get("h4") ? ReversiConstants.HeuristicsWeight.h4 * h4(currentState) : 0;
 
         return result;
     }
@@ -263,54 +275,111 @@ public class MiniMaxLogic {
         int whiteCount = sumAllWhites(currentState);
         int blackCount = sumAllBlacks(currentState);
         if (bIsBlackMax)
-            return (blackCount - whiteCount);
+            return (int) (100 * (float)blackCount/(blackCount + whiteCount));
         else
-            return (whiteCount - blackCount);
+            return (int) (100 * (float)whiteCount/(whiteCount + blackCount));
     }
 
-    // this is corner heuristic - add score for corner
-    private int h2 (ReversiBoardState currentState) {
-        int whiteCorner = 0;
-        int blackCorner = 0;
 
-        byte currCorner = currentState.boardStateBeforeMove[0][0];
-        if (currCorner != ReversiConstants.CubeStates.none) {
-            if (currCorner == ReversiConstants.CubeStates.black)
-                blackCorner++;
-            else whiteCorner++;
-        }
-        currCorner = currentState.boardStateBeforeMove[0][ReversiConstants.BoardSize.boardWidth - 1];
-        if (currCorner != ReversiConstants.CubeStates.none) {
-            if (currCorner == ReversiConstants.CubeStates.black)
-                blackCorner++;
-            else whiteCorner++;
-        }
-        currCorner = currentState.boardStateBeforeMove[ReversiConstants.BoardSize.boardHeight - 1][0];
-        if (currCorner != ReversiConstants.CubeStates.none) {
-            if (currCorner == ReversiConstants.CubeStates.black)
-                blackCorner++;
-            else whiteCorner++;
-        }
-        currCorner = currentState.boardStateBeforeMove[ReversiConstants.BoardSize.boardHeight - 1][ReversiConstants.BoardSize.boardWidth - 1];
-        if (currCorner != ReversiConstants.CubeStates.none) {
-            if (currCorner == ReversiConstants.CubeStates.black)
-                blackCorner++;
-            else whiteCorner++;
-        }
+    /** this is number of stable discs heuristic **/
+    public int h2(ReversiBoardState currentState) {
+        int blackStableDiscs = stabilityCheck(currentState, ReversiConstants.CubeStates.black);
+        int whiteStableDiscs = stabilityCheck(currentState, ReversiConstants.CubeStates.white);
 
+        int sum = blackStableDiscs + whiteStableDiscs;
+        if (sum == 0 ) return 0;
         if (bIsBlackMax) {
-            return blackCorner - whiteCorner;
+            return (int) (100 * (float) blackStableDiscs / sum);
         } else {
-            return whiteCorner - blackCorner;
+            return (int) (100 * (float) whiteStableDiscs / sum);
         }
     }
+
+    private int stabilityCheck (ReversiBoardState currentState, byte cubeState) {
+
+        boolean[][] stableDiscs = new boolean[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
+        for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row++) {
+            for (int col = 0; col < ReversiConstants.BoardSize.boardWidth; col++) {
+                stableDiscs[row][col] = false;
+            }
+        }
+
+        checkCorner(currentState, stableDiscs, 0, 0, 1, 1, ReversiConstants.BoardSize.boardWidth, ReversiConstants.BoardSize.boardHeight, cubeState);
+        checkCorner(currentState, stableDiscs, 0, ReversiConstants.BoardSize.boardWidth - 1, -1, 1, 0, ReversiConstants.BoardSize.boardHeight, cubeState);
+        checkCorner(currentState, stableDiscs, ReversiConstants.BoardSize.boardHeight - 1, ReversiConstants.BoardSize.boardWidth - 1, -1, -1, 0, 0, cubeState);
+        checkCorner(currentState, stableDiscs, ReversiConstants.BoardSize.boardHeight - 1, 0, 1, -1, ReversiConstants.BoardSize.boardWidth, 0, cubeState);
+
+        int resCounter = 0;
+        for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row++) {
+            for (int col = 0; col < ReversiConstants.BoardSize.boardWidth; col++) {
+                resCounter += stableDiscs[row][col] ? 1 : 0;
+            }
+        }
+        return resCounter;
+    }
+
+
+    private void checkCorner(ReversiBoardState currentState, boolean[][] stableDiscs, int x, int y, int xDir, int yDir, int xBoarder, int yBoarder, byte cubeState) {
+        int yRunner = y, xRunner = x;
+        while (yRunner != yBoarder && currentState.boardStateBeforeMove[yRunner][y] == cubeState) {
+            stableDiscs[yRunner][y] = true;
+            yRunner += yDir;
+        }
+        yRunner -= yDir;
+        while (xRunner != xBoarder && currentState.boardStateBeforeMove[x][xRunner] == cubeState) {
+            stableDiscs[x][xRunner] = true;
+            xRunner += xDir;
+        }
+        xRunner -= xDir;
+
+        if (yRunner > y + 1 && xRunner > x +1) {
+            checkCorner(currentState, stableDiscs, x+xDir, y+yDir, xDir, yDir, xRunner, yRunner, cubeState);
+        }
+
+    }
+
+        /** OLD h2
+    // this is corner heuristic - add score for corner
+//    private int h2 (ReversiBoardState currentState) {
+//        int whiteCorner = 0;
+//        int blackCorner = 0;
+//
+//        byte currCorner = currentState.boardStateBeforeMove[0][0];
+//        if (currCorner != ReversiConstants.CubeStates.none) {
+//            if (currCorner == ReversiConstants.CubeStates.black)
+//                blackCorner++;
+//            else whiteCorner++;
+//        }
+//        currCorner = currentState.boardStateBeforeMove[0][ReversiConstants.BoardSize.boardWidth - 1];
+//        if (currCorner != ReversiConstants.CubeStates.none) {
+//            if (currCorner == ReversiConstants.CubeStates.black)
+//                blackCorner++;
+//            else whiteCorner++;
+//        }
+//        currCorner = currentState.boardStateBeforeMove[ReversiConstants.BoardSize.boardHeight - 1][0];
+//        if (currCorner != ReversiConstants.CubeStates.none) {
+//            if (currCorner == ReversiConstants.CubeStates.black)
+//                blackCorner++;
+//            else whiteCorner++;
+//        }
+//        currCorner = currentState.boardStateBeforeMove[ReversiConstants.BoardSize.boardHeight - 1][ReversiConstants.BoardSize.boardWidth - 1];
+//        if (currCorner != ReversiConstants.CubeStates.none) {
+//            if (currCorner == ReversiConstants.CubeStates.black)
+//                blackCorner++;
+//            else whiteCorner++;
+//        }
+//        if (bIsBlackMax) {
+//            return 25 * (blackCorner - whiteCorner);
+//        } else {
+//            return 25 * (whiteCorner - blackCorner);
+//        }
+//    } **/
 
     /** this is number of legal moves heuristic **/
     private int h3(ReversiBoardState currentState) {
         int currentPlayerMoves;
         int nextPlayerMoves;
-        if (movesCache != null)
-        {
+        if (movesCache != null) {
             currentPlayerMoves = allResultsCached(currentState, 0).size();
             ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
             nextPlayerMoves = allResultsCached(nextState, 0).size();
@@ -320,9 +389,45 @@ public class MiniMaxLogic {
             ReversiBoardState nextState = new ReversiBoardState(currentState.boardStateBeforeMove, !currentState.bIsBlackMove);
             nextPlayerMoves = allResults(nextState).size();
         }
-        return currentPlayerMoves - nextPlayerMoves;
+        return (int) (100 * (float)currentPlayerMoves/(currentPlayerMoves + nextPlayerMoves));
     }
 
+    /** this is number of frontiers heuristic **/
+    private int h4(ReversiBoardState currentState) {
+        int blackFrontiers = 0;
+        int whiteFrontiers = 0;
+        for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.BoardSize.boardWidth; j++) {
+                if (currentState.boardStateBeforeMove[i][j] != ReversiConstants.CubeStates.none) {
+                    for (int horInterval = -1; horInterval < 2; horInterval++) {
+                        for (int verInterval = -1; verInterval < 2; verInterval++) {
+                            int row = i + horInterval;
+                            if (row >= ReversiConstants.BoardSize.boardHeight || row < 0) {
+                                continue;
+                            }
+                            int col = j + verInterval;
+                            if (col >= ReversiConstants.BoardSize.boardWidth || col < 0) {
+                                continue;
+                            }
+                            if (currentState.boardStateBeforeMove[row][col] == ReversiConstants.CubeStates.none) {
+                                if (currentState.boardStateBeforeMove[i][j] == ReversiConstants.CubeStates.black) {
+                                    blackFrontiers++;
+                                } else {
+                                    whiteFrontiers++;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        if(bIsBlackMax){
+            return (int) (100 * (float)whiteFrontiers/(whiteFrontiers + blackFrontiers));
+        } else {
+            return (int) (100 * (float)blackFrontiers/(whiteFrontiers + blackFrontiers));
+        }
+    }
 
     private int sumAllWhites(ReversiBoardState currentState){
         int count = 0;

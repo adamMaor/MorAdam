@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.othello.SettingsDialog">
-  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="48" y="54" width="1186" height="634"/>
+      <xy x="48" y="54" width="1186" height="681"/>
     </constraints>
     <properties>
       <maximumSize width="657" height="634"/>
@@ -13,7 +13,7 @@
       <grid id="94766" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -43,192 +43,49 @@
           </grid>
         </children>
       </grid>
-      <grid id="e3588" layout-manager="GridLayoutManager" row-count="14" column-count="6" same-size-horizontally="false" same-size-vertically="true" hgap="5" vgap="5">
+      <grid id="e3588" layout-manager="GridLayoutManager" row-count="7" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="7" left="7" bottom="7" right="7"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="bevel-raised" title="Game Options"/>
+        <border type="bevel-raised" title="Heuristics and Performance Options:"/>
         <children>
-          <component id="18760" class="javax.swing.JCheckBox" binding="blackh4CheckBox">
+          <component id="9642f" class="javax.swing.JLabel" binding="h1Label">
             <constraints>
-              <grid row="12" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="h4"/>
-            </properties>
-          </component>
-          <component id="dc4d7" class="javax.swing.JCheckBox" binding="blackh3CheckBox">
-            <constraints>
-              <grid row="11" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="h3"/>
-            </properties>
-          </component>
-          <component id="7d5c4" class="javax.swing.JCheckBox" binding="blackh2CheckBox">
-            <constraints>
-              <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <selected value="true"/>
-              <text value="h2"/>
-            </properties>
-          </component>
-          <component id="ef193" class="javax.swing.JCheckBox" binding="blackh1CheckBox">
-            <constraints>
-              <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <enabled value="false"/>
-              <selected value="true"/>
-              <text value="h1"/>
-            </properties>
-          </component>
-          <component id="37be4" class="javax.swing.JCheckBox" binding="whiteh4CheckBox">
-            <constraints>
-              <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="h4"/>
-            </properties>
-          </component>
-          <component id="dd640" class="javax.swing.JCheckBox" binding="whiteh3CheckBox">
-            <constraints>
-              <grid row="11" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="h3"/>
-            </properties>
-          </component>
-          <component id="84970" class="javax.swing.JCheckBox" binding="whiteh2CheckBox">
-            <constraints>
-              <grid row="10" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <selected value="true"/>
-              <text value="h2"/>
-            </properties>
-          </component>
-          <component id="5cb7a" class="javax.swing.JCheckBox" binding="whiteh1CheckBox">
-            <constraints>
-              <grid row="9" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <enabled value="false"/>
-              <selected value="true"/>
-              <text value="h1"/>
-            </properties>
-          </component>
-          <component id="7b7a5" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="8" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <doubleBuffered value="false"/>
-              <text value="Heuristics to Select"/>
-            </properties>
-          </component>
-          <component id="9642f" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Most Discs (10)"/>
             </properties>
           </component>
-          <component id="f3a35" class="javax.swing.JLabel">
+          <component id="f3a35" class="javax.swing.JLabel" binding="h2Label">
             <constraints>
-              <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Corners (40)"/>
+              <text value="Corners (25)"/>
             </properties>
           </component>
-          <component id="eace4" class="javax.swing.JLabel">
+          <component id="eace4" class="javax.swing.JLabel" binding="h3Label">
             <constraints>
-              <grid row="11" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Mobility (10)"/>
             </properties>
           </component>
-          <component id="c52f6" class="javax.swing.JLabel">
+          <component id="c52f6" class="javax.swing.JLabel" binding="h4Label">
             <constraints>
-              <grid row="12" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Stability (10)"/>
             </properties>
           </component>
-          <component id="ac094" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Player Type:"/>
-            </properties>
-          </component>
-          <component id="c463a" class="javax.swing.JComboBox" binding="blackCombo">
-            <constraints>
-              <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <model>
-                <item value="HUMAN"/>
-                <item value="PC"/>
-                <item value="Another PC"/>
-              </model>
-            </properties>
-          </component>
-          <component id="4bcca" class="javax.swing.JComboBox" binding="whiteCombo">
-            <constraints>
-              <grid row="7" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <model>
-                <item value="HUMAN"/>
-                <item value="PC"/>
-                <item value="Another PC"/>
-              </model>
-            </properties>
-          </component>
-          <component id="138bd" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Black:"/>
-            </properties>
-          </component>
-          <component id="2f2ca" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="6" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="White:"/>
-            </properties>
-          </component>
-          <component id="3de3" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="3" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Heuristics and Performance Options:"/>
-            </properties>
-          </component>
-          <component id="c02d3" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Display Options:"/>
-            </properties>
-          </component>
           <component id="f43f3" class="javax.swing.JCheckBox" binding="useAlphaBetaPruningCheckBox" default-binding="true">
             <constraints>
-              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <selected value="true"/>
@@ -237,16 +94,121 @@
           </component>
           <component id="bc9c6" class="javax.swing.JCheckBox" binding="useCacheMaxDepthCheckBox" default-binding="true">
             <constraints>
-              <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <selected value="true"/>
               <text value="Use Cache (max depth is 7)"/>
             </properties>
           </component>
+          <component id="7b7a5" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <doubleBuffered value="false"/>
+              <text value="Heuristics to Select (Weight):"/>
+            </properties>
+          </component>
+          <grid id="e9bf3" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="2" column="1" row-span="5" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="537bd" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="White:"/>
+                </properties>
+              </component>
+              <component id="5cb7a" class="javax.swing.JCheckBox" binding="whiteh1CheckBox">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <selected value="true"/>
+                  <text value="h1"/>
+                </properties>
+              </component>
+              <component id="84970" class="javax.swing.JCheckBox" binding="whiteh2CheckBox">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="h2"/>
+                </properties>
+              </component>
+              <component id="dd640" class="javax.swing.JCheckBox" binding="whiteh3CheckBox">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="h3"/>
+                </properties>
+              </component>
+              <component id="37be4" class="javax.swing.JCheckBox" binding="whiteh4CheckBox">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="h4"/>
+                </properties>
+              </component>
+              <component id="33d88" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Black:"/>
+                </properties>
+              </component>
+              <component id="ef193" class="javax.swing.JCheckBox" binding="blackh1CheckBox">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <selected value="true"/>
+                  <text value="h1"/>
+                </properties>
+              </component>
+              <component id="7d5c4" class="javax.swing.JCheckBox" binding="blackh2CheckBox">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="h2"/>
+                </properties>
+              </component>
+              <component id="dc4d7" class="javax.swing.JCheckBox" binding="blackh3CheckBox">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="h3"/>
+                </properties>
+              </component>
+              <component id="18760" class="javax.swing.JCheckBox" binding="blackh4CheckBox">
+                <constraints>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="h4"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
           <component id="ffce6" class="javax.swing.JLabel">
             <constraints>
-              <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="MiniMax Depth:"/>
@@ -254,108 +216,181 @@
           </component>
           <component id="80d69" class="javax.swing.JSpinner" binding="depthSpinner">
             <constraints>
-              <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false">
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="1" use-parent-layout="false">
                 <minimum-size width="50" height="-1"/>
               </grid>
             </constraints>
             <properties/>
           </component>
-          <component id="c58a5" class="javax.swing.JLabel">
+        </children>
+      </grid>
+      <grid id="3ed29" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="7" left="7" bottom="7" right="7"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="bevel-raised" title="Shared File"/>
+        <children>
+          <component id="515b4" class="javax.swing.JButton" binding="generateFileButton" default-binding="true">
             <constraints>
-              <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="1st Move:"/>
+              <text value="Generate File"/>
+            </properties>
+          </component>
+          <component id="75cfd" class="javax.swing.JTextField" binding="filePathField">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="29964" class="javax.swing.JCheckBox" binding="createdByMeCheckBox" default-binding="true">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Created by me"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="489db" layout-manager="GridLayoutManager" row-count="2" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="7" left="7" bottom="7" right="7"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="bevel-raised" title="Display Options"/>
+        <children>
+          <grid id="d6855" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="d3b42" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="1" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="PC delay (mili):"/>
+                </properties>
+              </component>
+              <component id="bf37e" class="javax.swing.JSpinner" binding="delaySpinner">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <minimum-size width="50" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <hspacer id="a8e12">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+            </children>
+          </grid>
+          <component id="f43cd" class="javax.swing.JCheckBox" binding="showLastMoveBlueCheckBox" default-binding="true">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <selected value="false"/>
+              <text value="Show Last Move (Blue)"/>
+            </properties>
+          </component>
+          <component id="dc7e6" class="javax.swing.JCheckBox" binding="showAvailableMovesGreenCheckBox" default-binding="true">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <selected value="false"/>
+              <text value="Show Available Moves (Green)"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="148a6" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="7" left="7" bottom="7" right="7"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="bevel-raised" title="Game Play Options"/>
+        <children>
+          <component id="ac094" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Player Type:"/>
             </properties>
           </component>
           <component id="51928" class="javax.swing.JComboBox" binding="firstMoveCombo">
             <constraints>
-              <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <model>
                 <item value="White"/>
                 <item value="Black"/>
               </model>
+              <selectedIndex value="-1"/>
             </properties>
           </component>
-          <component id="d3b42" class="javax.swing.JLabel">
+          <component id="c58a5" class="javax.swing.JLabel">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="PC delay (mili):"/>
+              <text value="1st Move:"/>
             </properties>
           </component>
-          <component id="bf37e" class="javax.swing.JSpinner" binding="delaySpinner">
+          <component id="138bd" class="javax.swing.JLabel">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                <minimum-size width="50" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="f43cd" class="javax.swing.JCheckBox" binding="showLastMoveBlueCheckBox" default-binding="true">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <selected value="true"/>
-              <text value="Show Last Move (Blue)"/>
+              <text value="Black:"/>
             </properties>
           </component>
-          <component id="dc7e6" class="javax.swing.JCheckBox" binding="showAvailableMovesGreenCheckBox" default-binding="true">
+          <component id="c463a" class="javax.swing.JComboBox" binding="blackCombo">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <selected value="true"/>
-              <text value="Show Available Moves (Green)"/>
+              <model>
+                <item value="HUMAN"/>
+                <item value="PC"/>
+                <item value="Another PC"/>
+              </model>
+              <selectedIndex value="-1"/>
             </properties>
           </component>
-          <component id="29964" class="javax.swing.JCheckBox" binding="createdByMeCheckBox" default-binding="true">
+          <component id="2f2ca" class="javax.swing.JLabel">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Created by me"/>
+              <text value="White:"/>
             </properties>
           </component>
-          <component id="75cfd" class="javax.swing.JTextField" binding="filePathField">
+          <component id="4bcca" class="javax.swing.JComboBox" binding="whiteCombo">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="515b4" class="javax.swing.JButton" binding="generateFileButton" default-binding="true">
-            <constraints>
-              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="1" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Generate File"/>
-            </properties>
-          </component>
-          <vspacer id="a6ce0">
-            <constraints>
-              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="0" indent="1" use-parent-layout="false">
-                <preferred-size width="-1" height="10"/>
-                <maximum-size width="-1" height="20"/>
-              </grid>
-            </constraints>
-          </vspacer>
-          <hspacer id="c1b23">
-            <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <maximum-size width="20" height="-1"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <component id="4baa8" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="1" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Shared File (Will write all moves):"/>
+              <model>
+                <item value="HUMAN"/>
+                <item value="PC"/>
+                <item value="Another PC"/>
+              </model>
+              <selectedIndex value="-1"/>
             </properties>
           </component>
         </children>

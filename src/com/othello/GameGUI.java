@@ -58,7 +58,7 @@ public class GameGUI {
         currentWhite = 0;
         boardPanel.removeAll();
         bCurrentPlayerIsBlack = boardState.bIsBlackMove;
-        setNextMoveLabel();
+        setCurrentMoveLabel();
         setCurrentPlayerIndicator(bCurrentPlayerIsBlack);
         byte[][] boardArray = boardState.boardStateBeforeMove;
         for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++){
@@ -103,7 +103,7 @@ public class GameGUI {
     }
 
     private void updateProgressBar() {
-        gameStatusLabel.setText("Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite);
+        gameStatusLabel.setText("White (" + whitePlayerType + "):" + currentWhite + ", Black (" + blackPlayerType + "): " + currentBlack);
         currentProgress = currentBlack + currentWhite;
         progressBar.setValue(currentProgress);
     }
@@ -136,11 +136,11 @@ public class GameGUI {
         this.gameLogic = gameLogic;
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
-        setNextMoveLabel();
+        setCurrentMoveLabel();
     }
 
-    private void setNextMoveLabel() {
-        String strNextMove = "Next Move (";
+    private void setCurrentMoveLabel() {
+        String strNextMove = "Current Move (";
         strNextMove += bCurrentPlayerIsBlack ? blackPlayerType : whitePlayerType;
         strNextMove += ") ";
         nextMoveLabel.setText(strNextMove);
@@ -148,7 +148,7 @@ public class GameGUI {
 
     public void gameIsOver() {
         String strRes = currentBlack > currentWhite ? "Black Wins !!! " : currentBlack == currentWhite ? "It Was A Tie !" : "White Wins !!!";
-        strRes += "\n" + "The Score Was: Black (" + blackPlayerType + "): " + currentBlack + ", White (" + whitePlayerType + "):" + currentWhite + "\n";
+        strRes += "\n" + "The Score Was: \n    White (" + whitePlayerType + "):" + currentWhite + "\n    Black (" + blackPlayerType + "): " + currentBlack + "\n";
         strRes += gameLogic.getGameSum();
         JOptionPane.showMessageDialog(null, "Game Is Over, " + strRes);
     }
@@ -180,6 +180,7 @@ public class GameGUI {
                         && currentState.boardStateBeforeMove[row][col] != ReversiConstants.CubeStates.none)
                 {
                     boardGuiArray[row][col].setBackground(Color.blue);
+                    return;
                 }
             }
         }
