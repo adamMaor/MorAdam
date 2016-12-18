@@ -52,8 +52,8 @@ public class SettingsDialog extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
 
         h1Label.setText("Disks Count (" + ReversiConstants.HeuristicsWeight.h1 + "): ");
-        h2Label.setText("Stability (" + ReversiConstants.HeuristicsWeight.h2 + "): ");
-        h3Label.setText("Mobility (" + ReversiConstants.HeuristicsWeight.h3 + "): ");
+        h2Label.setText("Corners (" + ReversiConstants.HeuristicsWeight.h2 + "): ");
+        h3Label.setText("Stability (" + ReversiConstants.HeuristicsWeight.h3 + "): ");
         h4Label.setText("Frontiers (" + ReversiConstants.HeuristicsWeight.h4 + "): ");
 
 //        whiteCombo.setSelectedIndex(ReversiConstants.PlayerTypes.human);
@@ -62,7 +62,7 @@ public class SettingsDialog extends JDialog {
         firstMoveCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
 
 
-        SpinnerModel depthModel = new SpinnerNumberModel(6, 1, 10, 1);
+        SpinnerModel depthModel = new SpinnerNumberModel(5, 1, 10, 1);
         depthSpinner.setModel(depthModel);
         JComponent editor = depthSpinner.getEditor();
         JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor)editor;
