@@ -15,34 +15,92 @@ import java.util.List;
 public class FileParser {
 
     private Path sharedFile;
+    private boolean initialized = false;
 
     public FileParser() {
         sharedFile = null;
     }
 
-    public void init(String filePath, boolean bIsFileCreatedByMe, boolean bIsFirstMoveBalck) {
-        sharedFile = Paths.get(filePath);
-        if (sharedFile == null)
-        {
-            // Error
-            return;
-        }
-        if (bIsFileCreatedByMe) {
-            writeInitialState(bIsFirstMoveBalck);
+    public void init(String filePath, boolean bIsFileCreatedByMe, boolean bIsFirstMoveBlack) {
+        if (filePath.isEmpty() == false) {
+            sharedFile = Paths.get(filePath);
+            if (sharedFile != null)
+            {
+                initialized = true;
+                if (bIsFileCreatedByMe) {
+                    writeInitialState(bIsFirstMoveBlack);
+                }
+                return;
+            }
         }
     }
 
     public ReversiBoardState getNextState() {
         ReversiBoardState currentState = null;
-        List<String> linesList = null;
-        try {
-            linesList =  Files.readAllLines(sharedFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (initialized){
+            List<String> linesList = null;
+            try {
+                linesList =  Files.readAllLines(sharedFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (linesList != null) {
+                String strLastMove = linesList.get(linesList.size() - 1);
+                currentState = parseBoard(strLastMove);
+            }
         }
-        if (linesList != null) {
-            String strLastMove = linesList.get(linesList.size() - 1);
-            ArrayList<String> words = new ArrayList(Arrays.asList(strLastMove.split(",")));
+        return currentState;
+    }
+
+    public void writeNextState(ReversiBoardState nextState){
+        if (initialized){
+            String strLine = nextState.bIsBlackMove ? "black," : "white,";
+            byte[][] byteArray = nextState.boardStateBeforeMove;
+            for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
+                int j = 0;
+                while (j <ReversiConstants.BoardSize.boardWidth) {
+                    byte val = byteArray[i][j];
+                    int seqLen = 1;
+                    while (j + seqLen < ReversiConstants.BoardSize.boardWidth && byteArray[i][j + seqLen] == val) {
+                        seqLen++;
+                    }
+                    strLine += "" + seqLen + " " + val + ",";
+                    j += seqLen;
+                }
+            }
+            strLine += "end\n";
+            try {
+                Files.write(sharedFile, strLine.getBytes(), StandardOpenOption.APPEND);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void writeInitialState(boolean bIsBlackFirst)
+    {
+        if (initialized){
+            String strLine = bIsBlackFirst ? "black," : "white,";
+            strLine += ReversiConstants.BoardSize.initBoardString;
+            try {
+                Files.write(sharedFile, strLine.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public ReversiBoardState getInitState(boolean bIsFirstBlack) {
+        String strState = bIsFirstBlack ? "black," : "white,";
+        strState += ReversiConstants.BoardSize.initBoardString;
+        return parseBoard(strState);
+    }
+
+    private ReversiBoardState parseBoard(String boardStateLine) {
+        ReversiBoardState currentState = null;
+        if (boardStateLine.isEmpty() == false) {
+            ArrayList<String> words = new ArrayList(Arrays.asList(boardStateLine.split(",")));
             boolean isBlackTurn = words.get(0).equals("black") ? true : false;
             byte[][] byteArray = new byte[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
             int row = 0, col =0;
@@ -63,49 +121,12 @@ public class FileParser {
                 }
                 else { col = currColIndex; }
             }
-            if (words.get(wordIndex).equals("end") == false) {
+
+            if ( (words.get(wordIndex).equals("end\n") == false) && (words.get(wordIndex).equals("end") == false) ) {
                 System.out.println("An Error has occurred in file parsing, check legality of file lines");
-                return null;
             }
             else { currentState = new ReversiBoardState(byteArray,isBlackTurn); }
-        }
-        return currentState;
-    }
-
-    public void writeNextState(ReversiBoardState nextState){
-        String strLine = nextState.bIsBlackMove ? "black," : "white,";
-        byte[][] byteArray = nextState.boardStateBeforeMove;
-        for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
-            int j = 0;
-            while (j <ReversiConstants.BoardSize.boardWidth) {
-                byte val = byteArray[i][j];
-                int seqLen = 1;
-                while (j + seqLen < ReversiConstants.BoardSize.boardWidth && byteArray[i][j + seqLen] == val) {
-                    seqLen++;
-                }
-                strLine += "" + seqLen + " " + val + ",";
-                j += seqLen;
             }
-        }
-        strLine += "end\n";
-        try {
-            Files.write(sharedFile, strLine.getBytes(), StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeInitialState(boolean bIsBlackFirst)
-    {
-        String strLine = bIsBlackFirst ? "black," : "white,";
-        strLine += "12 0,12 0,12 0,12 0,12 0,5 0,1 1,1 2,5 0,5 0,1 2,1 1,5 0,12 0,12 0,12 0,12 0,12 0,end" +  "\n";
-//        String strLine = "white,12 1,11 1,1 0,11 1,1 2,11 1,1 2,1 2,2 1,1 2,7 1,1 2,12 2,1 2,1 1,1 2,1 1,2 2,4 1,1 2,1 1,1 2,1 1,1 2,5 1,3 2,1 1,3 2,9 1,4 2,3 1,1 2,4 1,1 2,2 0,1 2,3 1,1 0,1 2,1 0,1 1,1 0,1 2,2 0,1 2,5 0,1 2,1 0,1 1,end" + "\n";
-
-        try {
-            Files.write(sharedFile, strLine.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return currentState;
     }
 }

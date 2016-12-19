@@ -33,7 +33,7 @@ public class GameLogic {
     private int pcMoveCounter;
     private boolean gameOver;
 
-    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, int depth, boolean isAlphaBeta, boolean useCache,
+    public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, boolean bFirstPlayerWasBlack, int depth, boolean isAlphaBeta, boolean useCache,
                      int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove,
                      HashMap<String,Boolean> blackPlayerHeuristicsMap, HashMap<String,Boolean> whitePlayerHeuristicsMap) {
         this.whitePlayerType = whitePlayerType;
@@ -44,8 +44,9 @@ public class GameLogic {
         this.bIsAlphaBeta = isAlphaBeta;
         this.bIsCacheUsed = useCache;
         this.fileParser = fileParser;
-        this.currentState = fileParser.getNextState();
-        bFirstPlayerWasBlack = currentState.bIsBlackMove;
+        this.bFirstPlayerWasBlack = bFirstPlayerWasBlack;
+//        this.currentState = fileParser.getNextState();
+        this.currentState = fileParser.getInitState(bFirstPlayerWasBlack);
         this.movesCache = new MovesCache();
         this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
         this.lastState = currentState;
@@ -57,7 +58,7 @@ public class GameLogic {
         this.pcMoveCounter = 0;
         validateMove(currentState);
         refreshGui();
-        bIsAutoPlayOn = false;
+        bIsAutoPlayOn = true;
         gameOver = false;
     }
 
@@ -76,13 +77,27 @@ public class GameLogic {
                 return;
             case ReversiConstants.GameStatus.currentPlayerCanPlay:
                 if (isCurrentPlayerPC()) {
-                    if (getPCMove() == true) {   // PC has played - generate next move
-                        if (bIsAutoPlayOn) {
-                            EventQueue.invokeLater(new Runnable() {
-                                @Override
-                                public void run() { generateMove(); } });
-                        }
+                    gameGUI.setPcRunning(true);
+                    try {   // sleep for the delay time specified in settings
+//                        startTime += delayTime;
+                        Thread.sleep(delayTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
+                    Thread pcMove = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getPCMove() == true) {   // PC has played - generate next move
+                                if (bIsAutoPlayOn) {
+                                    EventQueue.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() { generateMove(); } });
+                                }
+                            }
+                        }
+                    });
+                    pcMove.start();
+
                 }
                 else if (isCurrentPlayerOtherPC()) {    // now check for other pc logic
 
@@ -159,16 +174,9 @@ public class GameLogic {
         }
         else {
             changeTotalCurrentState(nextState);
-            if (bIsAutoPlayOn) {
-                try {   // sleep for the delay time specified in settings
-                    startTime += delayTime;
-                    Thread.sleep(delayTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         pcMoveTime += System.currentTimeMillis() - startTime;
+        gameGUI.setPcRunning(false);
         return bRes;
     }
 
@@ -246,14 +254,14 @@ public class GameLogic {
         if (gameOver == false) {
             this.gameOver = true;
             gameGUI.gameIsOver();
-            System.exit(0);
+//            System.exit(0);
         }
     }
 
     private void changeOnlyPlayer() {
         currentState.bIsBlackMove = !currentState.bIsBlackMove;
-        refreshGui();
         gameGUI.playerHadChanged();
+        refreshGui();
     }
 
     private void changeTotalCurrentState(byte[][] newBoard) {
@@ -300,6 +308,31 @@ public class GameLogic {
         res += "    First player was: " + (bFirstPlayerWasBlack ? "Black" : "White") + "\n";
         res += "    Average Pc Move Time: " + pcMoveTime / pcMoveCounter + " milliSeconds\n";
         res += "    Depth: " + depth + "\n    Used Alpha-Beta? " + bIsAlphaBeta + "\n    Used Cache? "+ bIsCacheUsed + "\n";
+        res += "Pc Player Heuristics (Relevant only for PC players):\n";
+
+        String h1Line = "    h1: ";
+        String h2Line = "    h2: ";
+        String h3Line = "    h3: ";
+        String h4Line = "    h4: ";
+        String h5Line = "    h5: ";
+
+        if (blackPlayerType == ReversiConstants.PlayerTypes.pc) {
+            res += "              White Player ";
+            h1Line += "          " + whitePlayerHeuristicsMap.get("h1");
+            h2Line += "          " + whitePlayerHeuristicsMap.get("h2");
+            h3Line += "          " + whitePlayerHeuristicsMap.get("h3");
+            h4Line += "          " + whitePlayerHeuristicsMap.get("h4");
+            h5Line += "          " + whitePlayerHeuristicsMap.get("h5");
+        }
+        if (blackPlayerType == ReversiConstants.PlayerTypes.pc) {
+            res += "     Black Player ";
+            h1Line += "                  " + blackPlayerHeuristicsMap.get("h1");
+            h2Line += "                  " + blackPlayerHeuristicsMap.get("h2");
+            h3Line += "                  " + blackPlayerHeuristicsMap.get("h3");
+            h4Line += "                  " + blackPlayerHeuristicsMap.get("h4");
+            h5Line += "                  " + blackPlayerHeuristicsMap.get("h5");
+        }
+        res += "\n" + h1Line + "\n" +  h2Line + "\n" + h3Line + "\n" + h4Line + "\n" + h5Line + "\n";
         return res;
     }
 }

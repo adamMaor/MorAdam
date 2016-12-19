@@ -1,6 +1,7 @@
 package com.othello;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,14 +37,16 @@ public class SettingsDialog extends JDialog {
     private JLabel h2Label;
     private JLabel h3Label;
     private JLabel h4Label;
+    private JCheckBox whiteh5CheckBox;
+    private JCheckBox blackh5CheckBox;
+    private JLabel h5Label;
 
     private static FileParser fileParser;
     private static GameLogic gameLogic;
     private static GameGUI gameGUI;
 
-    public SettingsDialog(GameGUI gameGUI, GameLogic gameLogic, FileParser fileParser) {
+    public SettingsDialog(GameLogic gameLogic, FileParser fileParser) {
 
-        this.gameGUI = gameGUI;
         this.gameLogic = gameLogic;
         this.fileParser = fileParser;
         setContentPane(contentPane);
@@ -55,24 +58,27 @@ public class SettingsDialog extends JDialog {
         h2Label.setText("Corners (" + ReversiConstants.HeuristicsWeight.h2 + "): ");
         h3Label.setText("Stability (" + ReversiConstants.HeuristicsWeight.h3 + "): ");
         h4Label.setText("Frontiers (" + ReversiConstants.HeuristicsWeight.h4 + "): ");
+        h5Label.setText("Neighbors of Corners (" + ReversiConstants.HeuristicsWeight.h5 + "): ");
 
-//        whiteCombo.setSelectedIndex(ReversiConstants.PlayerTypes.human);
-        whiteCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
+        whiteCombo.setSelectedIndex(ReversiConstants.PlayerTypes.human);
         blackCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
-        firstMoveCombo.setSelectedIndex(ReversiConstants.PlayerTypes.pc);
+        firstMoveCombo.setSelectedIndex(ReversiConstants.PlayerTypes.human);
 
-
-        SpinnerModel depthModel = new SpinnerNumberModel(5, 1, 10, 1);
+        SpinnerModel depthModel = new SpinnerNumberModel(7, 1, 10, 2);
         depthSpinner.setModel(depthModel);
         JComponent editor = depthSpinner.getEditor();
         JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor)editor;
         spinnerEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
 
-        SpinnerModel DelayModel = new SpinnerNumberModel(0, 0, 1000, 50);
+        SpinnerModel DelayModel = new SpinnerNumberModel(250, 0, 1000, 50);
         delaySpinner.setModel(DelayModel);
         JComponent editor2 = delaySpinner.getEditor();
         JSpinner.DefaultEditor delayEditor = (JSpinner.DefaultEditor)editor2;
         delayEditor.getTextField().setHorizontalAlignment(JTextField.LEFT);
+
+        showAvailableMovesGreenCheckBox.setSelected(true);
+        showLastMoveBlueCheckBox.setSelected(true);
+//        useCacheMaxDepthCheckBox.setSelected(false);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -100,11 +106,6 @@ public class SettingsDialog extends JDialog {
                 filePathField.setText(generateFile());
             }
         });
-
-
-
-
-
     }
 
     private String generateFile() {
@@ -134,12 +135,14 @@ public class SettingsDialog extends JDialog {
         blackPlayerHeuristicsMap.put("h2", blackh2CheckBox.isSelected());
         blackPlayerHeuristicsMap.put("h3", blackh3CheckBox.isSelected());
         blackPlayerHeuristicsMap.put("h4", blackh4CheckBox.isSelected());
+        blackPlayerHeuristicsMap.put("h5", blackh5CheckBox.isSelected());
         HashMap<String,Boolean> whitePlayerHeuristicsMap = new HashMap<String, Boolean>();
         // fill white player heuristics
         whitePlayerHeuristicsMap.put("h1", whiteh1CheckBox.isSelected());
         whitePlayerHeuristicsMap.put("h2", whiteh2CheckBox.isSelected());
         whitePlayerHeuristicsMap.put("h3", whiteh3CheckBox.isSelected());
         whitePlayerHeuristicsMap.put("h4", whiteh4CheckBox.isSelected());
+        whitePlayerHeuristicsMap.put("h5", whiteh5CheckBox.isSelected());
         int depth = (Integer) depthSpinner.getValue();
         boolean isAlphaBeta = useAlphaBetaPruningCheckBox.isSelected();
         boolean useCache = useCacheMaxDepthCheckBox.isSelected();
@@ -147,23 +150,31 @@ public class SettingsDialog extends JDialog {
         String filePath = filePathField.getText();
         boolean isShowAvailableMoves = showAvailableMovesGreenCheckBox.isSelected();
         boolean isShowLastMove = showLastMoveBlueCheckBox.isSelected();
-        if (filePath.isEmpty() || Files.exists(Paths.get(filePath)) == false)
-        {
-            JOptionPane.showMessageDialog(null, "You Must Enter A shared File !!!!");
-            return;
+        if (whitePlayerType == ReversiConstants.PlayerTypes.otherPC || blackPlayerType == ReversiConstants.PlayerTypes.otherPC) {
+            if (whitePlayerType == blackPlayerType) {
+                JOptionPane.showMessageDialog(null, "Both Players can't be Other PC !!!!\nPlease change your selections");
+                return;
+            }
+            if (filePath.isEmpty() || Files.exists(Paths.get(filePath)) == false)
+            {
+                JOptionPane.showMessageDialog(null, "When Playing vs other pc, you must enter a shared file path !!!!");
+                return;
+            }
         }
 
+        gameGUI = new GameGUI(this);
         fileParser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
-        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, depth, isAlphaBeta, useCache, delayTime, isShowAvailableMoves, isShowLastMove, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
+        gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, bIsFirstMoveBlack, depth, isAlphaBeta, useCache, delayTime, isShowAvailableMoves, isShowLastMove, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
         gameGUI.init(gameLogic, whitePlayerType, blackPlayerType);
-        dispose();
+        this.setVisible(false);
+        gameGUI.setVisible(true);
+
     }
 
     private void onCancel() {
 // add your code here if necessary
         dispose();
         System.exit(0);
-
     }
 
 }

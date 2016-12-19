@@ -10,7 +10,8 @@ import java.util.ArrayList;
  * Main Gui Class
  * Handles all GUI paints and Events
  */
-public class GameGUI {
+public class GameGUI extends JFrame{
+    private SettingsDialog parent;
     private JPanel mainPanel;
     private JButton nextButton;
     private JCheckBox autoPlayCheckBox;
@@ -30,8 +31,16 @@ public class GameGUI {
     private String whitePlayerType = "Human";
     private boolean bCurrentPlayerIsBlack = true;
     private GameLogic gameLogic = null;
+    private boolean pcRunning;
 
-    public GameGUI() {
+    public GameGUI(SettingsDialog parent) {
+        this.parent = parent;
+        pcRunning = false;
+        this.setTitle("Reversi");
+        this.setContentPane(mainPanel);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(925, 1000);
+        this.setLocationRelativeTo(null);
         boardGuiArray = new CirclePanel[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
         progressBar.setMaximum(ReversiConstants.BoardSize.boardSquare);
         updateProgressBar();
@@ -48,7 +57,22 @@ public class GameGUI {
             public void actionPerformed(ActionEvent e) {
                 boolean isSelected = autoPlayCheckBox.isSelected();
                 gameLogic.setAutoPlay(isSelected);
-                if (!isSelected) nextButton.setEnabled(true);
+                if (!isSelected) {
+                    Thread setNextAvail = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (pcRunning) {
+                                try {
+                                    Thread.sleep(50);
+                                } catch (InterruptedException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                            nextButton.setEnabled(true);
+                        }
+                    });
+                    setNextAvail.start();
+                }
             }
         });
     }
@@ -128,10 +152,6 @@ public class GameGUI {
         }
     }
 
-    public Container mainPanel() {
-        return mainPanel;
-    }
-
     public void init(GameLogic gameLogic, byte whitePlayerType, byte blackPlayerType) {
         this.gameLogic = gameLogic;
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
@@ -151,11 +171,17 @@ public class GameGUI {
         strRes += "\n" + "The Score Was: \n    White (" + whitePlayerType + "):" + currentWhite + "\n    Black (" + blackPlayerType + "): " + currentBlack + "\n";
         strRes += gameLogic.getGameSum();
         JOptionPane.showMessageDialog(null, "Game Is Over, " + strRes);
+        this.setVisible(false);
+        parent.setVisible(true);
+        this.dispose();
+
     }
 
     public void playerHadChanged() {
-        String strRes = "Player had changed because no legal moves were available";
-        JOptionPane.showMessageDialog(null, strRes);
+        if (blackPlayerType.equals("Human") ||  whitePlayerType.equals("Human")) {
+            String strRes = "Player had changed because no legal moves were available";
+            JOptionPane.showMessageDialog(null, strRes);
+        }
     }
 
     public static void markAvailableMoves(ReversiBoardState currentState, ArrayList<ReversiBoardState> nextAvailableMovesList) {
@@ -184,6 +210,11 @@ public class GameGUI {
                 }
             }
         }
+    }
+
+    public void setPcRunning(boolean bIsRunning) {
+        this.pcRunning = bIsRunning;
+        nextButton.setEnabled(!bIsRunning);
     }
 
     private static class CirclePanel extends JPanel {
@@ -230,7 +261,7 @@ public class GameGUI {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             Dimension size = this.getSize();
-            int d = Math.min(size.width, size.height) - 10;
+            int d = Math.min(size.width, size.height) - 7;
             int x = (size.width - d) / 2;
             int y = (size.height - d) / 2;
             Graphics2D g2d = (Graphics2D) g;
