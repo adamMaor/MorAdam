@@ -214,7 +214,9 @@ public class GameGUI extends JFrame{
 
     public void setPcRunning(boolean bIsRunning) {
         this.pcRunning = bIsRunning;
-        nextButton.setEnabled(!bIsRunning);
+        if (autoPlayCheckBox.isSelected() == false) {
+            nextButton.setEnabled(!bIsRunning);
+        }
     }
 
     private static class CirclePanel extends JPanel {
