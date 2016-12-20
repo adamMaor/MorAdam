@@ -154,13 +154,11 @@ public class GameLogic {
             Timer timer = new Timer(50, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (bIsAutoPlayOn) {
                             EventQueue.invokeLater(new Runnable() {
                                 @Override
                                 public void run() { generateMove(); } });
                         }
-                    }
-                });
+            });
             timer.setRepeats(false);    // Single Shot
             timer.start();
         }
@@ -197,7 +195,8 @@ public class GameLogic {
     }
 
     private void changeOnlyPlayer() {
-        currentState.bIsBlackMove = !currentState.bIsBlackMove;
+        lastState = currentState;
+        currentState = new ReversiBoardState(lastState.boardStateBeforeMove, !lastState.bIsBlackMove);
         gameGUI.playerHadChanged();
         refreshGui();
     }
@@ -215,13 +214,7 @@ public class GameLogic {
     }
 
     private void refreshGui() {
-        gameGUI.repaintBoard(currentState);
-        if (bShowLastMove) {
-            gameGUI.markLastMove(currentState, lastState);
-        }
-        if (bShowAvailableMoves) {
-            GameGUI.markAvailableMoves(currentState, nextAvailableMovesList);
-        }
+        gameGUI.repaintBoard(currentState, lastState, bShowLastMove, bShowAvailableMoves, nextAvailableMovesList);
         fileParser.writeNextState(currentState);
     }
 
@@ -244,33 +237,38 @@ public class GameLogic {
     public String getGameSum() {
         String res = "Game Summary:\n";
         res += "    First player was: " + (bFirstPlayerWasBlack ? "Black" : "White") + "\n";
-        res += "    Average Pc Move Time: " + pcMoveTime / pcMoveCounter + " milliSeconds\n";
-        res += "    Depth: " + depth + "\n    Used Alpha-Beta? " + bIsAlphaBeta + "\n    Used Cache? "+ bIsCacheUsed + "\n";
-        res += "Pc Player Heuristics (Relevant only for PC players):\n";
+        if (whitePlayerType == ReversiConstants.PlayerTypes.pc || blackPlayerType == ReversiConstants.PlayerTypes.pc) {
+            res += "    Average Pc Move Time: " + pcMoveTime / pcMoveCounter + " milliSeconds\n";
+            res += "    Depth: " + depth + "\n    Used Alpha-Beta? " + bIsAlphaBeta + "\n    Used Cache? " + bIsCacheUsed + "\n";
+            res += "Pc Player Heuristics (Relevant only for PC players):\n";
 
-        String h1Line = "    h1: ";
-        String h2Line = "    h2: ";
-        String h3Line = "    h3: ";
-        String h4Line = "    h4: ";
-        String h5Line = "    h5: ";
+            String h1Line = "    h1: ";
+            String h2Line = "    h2: ";
+            String h3Line = "    h3: ";
+            String h4Line = "    h4: ";
+            String h5Line = "    h5: ";
 
-        if (blackPlayerType == ReversiConstants.PlayerTypes.pc) {
-            res += "              White Player ";
-            h1Line += "          " + whitePlayerHeuristicsMap.get("h1");
-            h2Line += "          " + whitePlayerHeuristicsMap.get("h2");
-            h3Line += "          " + whitePlayerHeuristicsMap.get("h3");
-            h4Line += "          " + whitePlayerHeuristicsMap.get("h4");
-            h5Line += "          " + whitePlayerHeuristicsMap.get("h5");
+            if (blackPlayerType == ReversiConstants.PlayerTypes.pc) {
+                res += "              White Player ";
+                h1Line += "          " + whitePlayerHeuristicsMap.get("h1");
+                h2Line += "          " + whitePlayerHeuristicsMap.get("h2");
+                h3Line += "          " + whitePlayerHeuristicsMap.get("h3");
+                h4Line += "          " + whitePlayerHeuristicsMap.get("h4");
+                h5Line += "          " + whitePlayerHeuristicsMap.get("h5");
+            }
+            if (blackPlayerType == ReversiConstants.PlayerTypes.pc) {
+                res += "     Black Player ";
+                h1Line += "                  " + blackPlayerHeuristicsMap.get("h1");
+                h2Line += "                  " + blackPlayerHeuristicsMap.get("h2");
+                h3Line += "                  " + blackPlayerHeuristicsMap.get("h3");
+                h4Line += "                  " + blackPlayerHeuristicsMap.get("h4");
+                h5Line += "                  " + blackPlayerHeuristicsMap.get("h5");
+            }
+            res += "\n" + h1Line + "\n" + h2Line + "\n" + h3Line + "\n" + h4Line + "\n" + h5Line + "\n";
         }
-        if (blackPlayerType == ReversiConstants.PlayerTypes.pc) {
-            res += "     Black Player ";
-            h1Line += "                  " + blackPlayerHeuristicsMap.get("h1");
-            h2Line += "                  " + blackPlayerHeuristicsMap.get("h2");
-            h3Line += "                  " + blackPlayerHeuristicsMap.get("h3");
-            h4Line += "                  " + blackPlayerHeuristicsMap.get("h4");
-            h5Line += "                  " + blackPlayerHeuristicsMap.get("h5");
+        else {
+            res += "No more Data is relevant (Try Playing Against the PC :) )";
         }
-        res += "\n" + h1Line + "\n" +  h2Line + "\n" + h3Line + "\n" + h4Line + "\n" + h5Line + "\n";
         return res;
     }
 }

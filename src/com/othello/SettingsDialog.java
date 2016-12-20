@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class SettingsDialog extends JDialog {
-    private Image img;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -54,14 +53,10 @@ public class SettingsDialog extends JDialog {
         setTitle("Set your Reversi Game Up");
         pack();
         setSize(500, getHeight());
+        setMaximumSize(getSize());
         setResizable(false);
         setLocationRelativeTo(null);
         setModal(true);
-        java.net.URL url = ClassLoader.getSystemResource("com/Othello/Resources/icon.png");
-        Toolkit kit = Toolkit.getDefaultToolkit();
-        img = kit.createImage(url);
-        this.setIconImage(img);
-
         getRootPane().setDefaultButton(buttonOK);
 
         h1Label.setText("Discs Count (" + ReversiConstants.HeuristicsWeight.h1 + "): ");
@@ -168,7 +163,7 @@ public class SettingsDialog extends JDialog {
                 return;
             }
         }
-        gameGUI = new GameGUI(this, img);
+        gameGUI = new GameGUI(this);
         fileParser.init(filePath, bIsCreatedHere, bIsFirstMoveBlack);
         gameLogic.init(gameGUI, fileParser, whitePlayerType, blackPlayerType, bIsFirstMoveBlack, depth, isAlphaBeta, useCache, delayTime, isShowAvailableMoves, isShowLastMove, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
         gameGUI.init(gameLogic, whitePlayerType, blackPlayerType);

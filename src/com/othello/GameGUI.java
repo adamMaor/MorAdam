@@ -26,15 +26,14 @@ public class GameGUI extends JFrame{
     private static CirclePanel[][] boardGuiArray;
     private int currentBlack = 2;
     private int currentWhite = 2;
-    private int currentProgress = 4;
+    private int currentProgress = 0;
     private String blackPlayerType = "Human";
     private String whitePlayerType = "Human";
     private boolean bCurrentPlayerIsBlack = true;
     private GameLogic gameLogic = null;
     private boolean pcRunning;
 
-    public GameGUI(SettingsDialog parent, Image img) {
-        this.setIconImage(img);
+    public GameGUI(SettingsDialog parent) {
         this.parent = parent;
         pcRunning = false;
         this.setTitle("Reversi");
@@ -49,6 +48,16 @@ public class GameGUI extends JFrame{
         this.setSize(925, 1000);
         this.setLocationRelativeTo(null);
         boardGuiArray = new CirclePanel[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
+        for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
+            for (int j = 0; j < ReversiConstants.BoardSize.boardWidth; j++) {
+                CirclePanel guiObject = new CirclePanel(ReversiConstants.Colors.reversiGreen);
+                boardPanel.add(guiObject);
+            }
+        }
+        gameStatusLabel.setMinimumSize(new Dimension(200,gameStatusLabel.getHeight()));
+        gameStatusLabel.setMaximumSize(new Dimension(200, gameStatusLabel.getHeight()));
+        gameStatusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        gameStatusLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         progressBar.setMaximum(ReversiConstants.BoardSize.boardSquare);
         updateProgressBar();
         nextButton.addActionListener(new ActionListener() {
@@ -84,42 +93,58 @@ public class GameGUI extends JFrame{
         });
     }
 
-    public void repaintBoard(ReversiBoardState boardState) {
-        currentBlack = 0;
-        currentWhite = 0;
-        boardPanel.removeAll();
+    public void repaintBoard(ReversiBoardState boardState, ReversiBoardState lastState, boolean bShowLastMove, boolean bShowAvailableMoves, ArrayList<ReversiBoardState> nextAvailableMovesList) {
+//        boardPanel.removeAll();
         bCurrentPlayerIsBlack = boardState.bIsBlackMove;
         setCurrentMoveLabel();
         setCurrentPlayerIndicator(bCurrentPlayerIsBlack);
         byte[][] boardArray = boardState.boardStateBeforeMove;
+        byte[][] lastBoardArray = lastState.boardStateBeforeMove;
         for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++){
             for (int j = 0; j < ReversiConstants.BoardSize.boardWidth; j++) {
                 final int finalI = i;
                 final int finalJ = j;
-                boardGuiArray[i][j] = null;
-                byte positionValue = boardArray[i][j];
-                Color color = ReversiConstants.Colors.reversiGreen;
-                switch (positionValue) {
-                    case ReversiConstants.CubeStates.white:
-                        color =   ReversiConstants.Colors.reversiWhite;
-                        currentWhite++;
-                        break;
-                    case ReversiConstants.CubeStates.black:
-                        color =   ReversiConstants.Colors.reversiBlack;
-                        currentBlack++;
-                }
-                CirclePanel guiObject = new CirclePanel(color);
-                guiObject.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        guiObjectClicked(finalI, finalJ);
+                byte currState = boardArray[i][j];
+                byte prevState = lastBoardArray[i][j];
+                if (currState != prevState || boardGuiArray[i][j] == null) {
+                    boardPanel.remove(i * ReversiConstants.BoardSize.boardHeight + j);
+                    boardGuiArray[i][j] = null;
+                    if (prevState != ReversiConstants.CubeStates.none) {
+                        if (prevState == ReversiConstants.CubeStates.black) {
+                            currentBlack--;
+                        }
+                        else {
+                            currentWhite--;
+                        }
                     }
-                });
-                boardGuiArray[i][j] = guiObject;
-                boardPanel.add(guiObject);
+                    Color color = ReversiConstants.Colors.reversiGreen;
+                    switch (currState) {
+                        case ReversiConstants.CubeStates.white:
+                            color =   ReversiConstants.Colors.reversiWhite;
+                            currentWhite++;
+                            break;
+                        case ReversiConstants.CubeStates.black:
+                            color =   ReversiConstants.Colors.reversiBlack;
+                            currentBlack++;
+                    }
+                    CirclePanel guiObject = new CirclePanel(color);
+                    guiObject.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            guiObjectClicked(finalI, finalJ);
+                        }
+                    });
+                    boardGuiArray[i][j] = guiObject;
+                    boardPanel.add(guiObject, i * ReversiConstants.BoardSize.boardHeight + j);
+                }
             }
         }
-//        System.gc();
+        if (bShowAvailableMoves) {
+            markAvailableMoves(boardState, nextAvailableMovesList);
+        }
+        if (bShowLastMove) {
+            markLastMove(boardState, lastState);
+        }
         updateProgressBar();
     }
 
@@ -134,7 +159,7 @@ public class GameGUI extends JFrame{
     }
 
     private void updateProgressBar() {
-        gameStatusLabel.setText("White (" + whitePlayerType + "):" + currentWhite + ", Black (" + blackPlayerType + "): " + currentBlack);
+        gameStatusLabel.setText("White (" + whitePlayerType + "):  " + currentWhite + "   ,   Black (" + blackPlayerType + "):  " + currentBlack);
         currentProgress = currentBlack + currentWhite;
         progressBar.setValue(currentProgress);
     }
@@ -164,6 +189,7 @@ public class GameGUI extends JFrame{
         this.blackPlayerType = blackPlayerType != 0 ? (blackPlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         this.whitePlayerType = whitePlayerType != 0 ? (whitePlayerType == 1 ? "PC" : "Another PC" ) : "Human";
         setCurrentMoveLabel();
+        updateProgressBar();
     }
 
     private void setCurrentMoveLabel() {
@@ -207,22 +233,24 @@ public class GameGUI extends JFrame{
         }
     }
 
-    public static void markAvailableMoves(ReversiBoardState currentState, ArrayList<ReversiBoardState> nextAvailableMovesList) {
+    private static void markAvailableMoves(ReversiBoardState currentState, ArrayList<ReversiBoardState> nextAvailableMovesList) {
         for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row ++ ) {
              for (int col = 0 ; col < ReversiConstants.BoardSize.boardWidth; col++ ) {
+                 Color color = ReversiConstants.Colors.reversiGreen;
                  for (int i = 0 ; i < nextAvailableMovesList.size(); i++) {
                      byte currentCubeState = currentState.boardStateBeforeMove[row][col];
-
-                     if (currentCubeState == ReversiConstants.CubeStates.none
-                             && currentCubeState != nextAvailableMovesList.get(i).boardStateBeforeMove[row][col]) {
-                         boardGuiArray[row][col].setBackground(Color.green);
+                     if (currentCubeState == ReversiConstants.CubeStates.none &&
+                            currentCubeState != nextAvailableMovesList.get(i).boardStateBeforeMove[row][col]) {
+                         color = Color.green;
+                         break;
                      }
                  }
+                 boardGuiArray[row][col].setBackground(color);
              }
         }
     }
 
-    public void markLastMove(ReversiBoardState currentState, ReversiBoardState lastState) {
+    private void markLastMove(ReversiBoardState currentState, ReversiBoardState lastState) {
         for (int row = 0; row < ReversiConstants.BoardSize.boardHeight; row ++ ) {
             for (int col = 0; col < ReversiConstants.BoardSize.boardWidth; col++) {
                 if (lastState.boardStateBeforeMove[row][col] == ReversiConstants.CubeStates.none
@@ -243,7 +271,6 @@ public class GameGUI extends JFrame{
     }
 
     private static class CirclePanel extends JPanel {
-
         Color mainColor = ReversiConstants.Colors.reversiGreen;
         Color midColor1 = ReversiConstants.Colors.reversiGreen;
         Color midColor2 = ReversiConstants.Colors.reversiGreen;
