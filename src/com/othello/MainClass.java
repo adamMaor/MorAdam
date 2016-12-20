@@ -10,22 +10,16 @@ public class MainClass {
 
     private static FileParser fileParser;
     private static GameLogic gameLogic;
+    private static LogicUtils logicUtils;
 
     public static void main(String[] args) {
 
-        gameLogic = new GameLogic();
+        logicUtils = new LogicUtils();
+        gameLogic = new GameLogic(logicUtils);
         fileParser = new FileParser();
 
         SettingsDialog dlg = new SettingsDialog(gameLogic, fileParser);
-        dlg.pack();
-        dlg.setSize(500, dlg.getHeight());
-        dlg.setMinimumSize(dlg.getSize());
-        dlg.setResizable(false);
-        dlg.setLocationRelativeTo(null);
+
         dlg.setVisible(true);
-
-
-
-//        gameLogic.generateMove();
     }
 }

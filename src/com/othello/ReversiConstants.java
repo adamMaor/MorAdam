@@ -42,7 +42,7 @@ public class ReversiConstants {
     }
 
     public static class Performance {
-        public static final byte maxCacheSize = 7;
+        public static final byte maxCacheDepth = 7;
     }
 
     public static class HeuristicsWeight {
@@ -51,10 +51,7 @@ public class ReversiConstants {
         public static final byte h3 = 15 ;
         public static final byte h4 = 10 ;
         public static final byte h5 = 15;
-
         public static final int maxUtilityScore = (h1 + h2 + h3 + h4 + h5) * 50;
         public static final int minUtilityScore = -maxUtilityScore;
-
     }
 }
-

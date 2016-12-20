@@ -33,12 +33,19 @@ public class GameGUI extends JFrame{
     private GameLogic gameLogic = null;
     private boolean pcRunning;
 
-    public GameGUI(SettingsDialog parent) {
+    public GameGUI(SettingsDialog parent, Image img) {
+        this.setIconImage(img);
         this.parent = parent;
         pcRunning = false;
         this.setTitle("Reversi");
         this.setContentPane(mainPanel);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                confirmExit();
+            }
+        });
         this.setSize(925, 1000);
         this.setLocationRelativeTo(null);
         boardGuiArray = new CirclePanel[ReversiConstants.BoardSize.boardHeight][ReversiConstants.BoardSize.boardWidth];
@@ -174,7 +181,23 @@ public class GameGUI extends JFrame{
         this.setVisible(false);
         parent.setVisible(true);
         this.dispose();
+    }
 
+    private void confirmExit() {
+        //Custom button text
+        Object[] options = {"Yes, sure",
+                "No, bring me back"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Are you sure you want to exit?",
+                "Done playing?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]);
+        if (n == 0) {
+            System.exit(0);
+        }
     }
 
     public void playerHadChanged() {

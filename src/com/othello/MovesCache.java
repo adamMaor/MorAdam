@@ -14,8 +14,8 @@ public class MovesCache {
         cacheMap = new HashMap<ReversiBoardState, ArrayList<ReversiBoardState>>();
     }
 
-    public boolean write(ReversiBoardState state, ArrayList<ReversiBoardState> possibleMovesList) {
-        return (cacheMap.put(state, possibleMovesList) != null);
+    public void write(ReversiBoardState state, ArrayList<ReversiBoardState> possibleMovesList) {
+        cacheMap.put(state, possibleMovesList);
     }
 
     public ArrayList<ReversiBoardState> read(ReversiBoardState currBoardState) {
@@ -36,14 +36,17 @@ public class MovesCache {
     }
 
     private void saveAllPossibleSubMoves(ReversiBoardState chosenState, HashMap<ReversiBoardState, ArrayList<ReversiBoardState>> tempCacheMap, int currentDepth) {
-        if (currentDepth < ReversiConstants.Performance.maxCacheSize) {
-            ArrayList<ReversiBoardState> chosenPossibleMoves = cacheMap.get(chosenState);
-            if (chosenPossibleMoves != null) {
-                tempCacheMap.put(chosenState, chosenPossibleMoves);
-                for (ReversiBoardState possibleMove : chosenPossibleMoves) {
-                    saveAllPossibleSubMoves(possibleMove, tempCacheMap, ++currentDepth);
-                }
+        ArrayList<ReversiBoardState> chosenPossibleMoves = cacheMap.get(chosenState);
+        if (chosenPossibleMoves != null) {
+            tempCacheMap.put(chosenState, chosenPossibleMoves);
+            for (ReversiBoardState possibleMove : chosenPossibleMoves) {
+                saveAllPossibleSubMoves(possibleMove, tempCacheMap, ++currentDepth);
             }
         }
+
+    }
+
+    public void removeSingle(ReversiBoardState state) {
+        cacheMap.remove(state);
     }
 }

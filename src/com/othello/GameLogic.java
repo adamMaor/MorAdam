@@ -12,6 +12,7 @@ import java.util.HashMap;
  * Created by Adam on 09/12/2016.
  */
 public class GameLogic {
+    private LogicUtils utils;
     private ReversiBoardState lastState;
     public static ReversiBoardState currentState;
     ArrayList<ReversiBoardState> nextAvailableMovesList;
@@ -33,6 +34,10 @@ public class GameLogic {
     private int pcMoveCounter;
     private boolean gameOver;
 
+    public GameLogic(LogicUtils logicUtils) {
+        utils = logicUtils;
+    }
+
     public void init(GameGUI gameGUI, FileParser fileParser, byte whitePlayerType, byte blackPlayerType, boolean bFirstPlayerWasBlack, int depth, boolean isAlphaBeta, boolean useCache,
                      int delayTime, boolean isShowAvailableMoves, boolean isShowLastMove,
                      HashMap<String,Boolean> blackPlayerHeuristicsMap, HashMap<String,Boolean> whitePlayerHeuristicsMap) {
@@ -47,7 +52,7 @@ public class GameLogic {
         this.bFirstPlayerWasBlack = bFirstPlayerWasBlack;
 //        this.currentState = fileParser.getNextState();
         this.currentState = fileParser.getInitState(bFirstPlayerWasBlack);
-        this.movesCache = new MovesCache();
+        this.movesCache = utils.getCache();
         this.nextAvailableMovesList = new ArrayList<ReversiBoardState>();
         this.lastState = currentState;
         this.gameGUI = gameGUI;
@@ -142,8 +147,7 @@ public class GameLogic {
      * @param col the column on the gameGUI
      */
     public void getHumanMove(final int row, final int col) {
-        byte[][] optionalBoard = deepCopyMatrix(currentState.boardStateBeforeMove);
-        checkMovesForPoint(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove, optionalBoard);
+        byte[][] optionalBoard = utils.fillOptionalBoardForPoint(currentState.boardStateBeforeMove, row, col, currentState.bIsBlackMove);
         if (!(Arrays.deepEquals(optionalBoard,currentState.boardStateBeforeMove ))) {
             changeTotalCurrentState(optionalBoard);
             // this timer is set to allow GUI to repaint
@@ -162,12 +166,12 @@ public class GameLogic {
         }
     }
 
-    public boolean getPCMove() {
+    private boolean getPCMove() {
         Long startTime = System.currentTimeMillis();
         pcMoveCounter++;
         boolean bRes = true;
         MovesCache cache = bIsCacheUsed ? movesCache : null;
-        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(currentState, depth, nextAvailableMovesList, cache, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
+        MiniMaxLogic miniMaxSolver = new MiniMaxLogic(utils, currentState, depth, nextAvailableMovesList, cache, blackPlayerHeuristicsMap, whitePlayerHeuristicsMap);
         ReversiBoardState nextState = miniMaxSolver.launchMiniMax(bIsAlphaBeta);
         if (nextState == null) {
             bRes = false;
@@ -180,82 +184,16 @@ public class GameLogic {
         return bRes;
     }
 
-    private ArrayList<ReversiBoardState> getAvailableMoves(ReversiBoardState currentState) {
-        byte[][] currentBoard = currentState.boardStateBeforeMove;
-        boolean bCurrentPlayerIsBlack = currentState.bIsBlackMove;
-        byte[][] optionalBoard = deepCopyMatrix(currentBoard);
-        ArrayList<ReversiBoardState> availableMoves = new ArrayList<ReversiBoardState>();
-        for (int i = 0; i < ReversiConstants.BoardSize.boardHeight; i++) {
-            for (int j = 0; j < ReversiConstants.BoardSize.boardWidth ; j++) {
-                if (currentBoard[i][j] == ReversiConstants.CubeStates.none) {
-                    checkMovesForPoint(currentBoard, i, j, bCurrentPlayerIsBlack, optionalBoard);
-                }
-                if (!(Arrays.deepEquals(optionalBoard, currentBoard))) {
-                    availableMoves.add(new ReversiBoardState(optionalBoard,!currentState.bIsBlackMove));
-                    optionalBoard = deepCopyMatrix(currentBoard);
-                }
-            }
-        }
-        return availableMoves;
-    }
-
-    /**
-     * Create a new gameGUI state according to given coordinate from the current gameGUI.
-     * @param currentBoard -
-     * @param i - row coordinate of human click on gameGUI
-     * @param j - col coordinate of human click on gameGUI
-     * @param bCurrentPlayerIsBlack
-     * @param optionalBoard
-     */
-    private static void checkMovesForPoint(byte[][] currentBoard, int i, int j, boolean bCurrentPlayerIsBlack, byte[][] optionalBoard) {
-        byte oppositePlayer = (byte) (bCurrentPlayerIsBlack ? 1 : 2);
-        for (int horInterval = -1; horInterval < 2 ; horInterval++) {
-            for (int verInterval = -1; verInterval < 2; verInterval++) {
-                int row = i + horInterval, col = j + verInterval;
-                while (row < ReversiConstants.BoardSize.boardHeight && row >= 0
-                        && col < ReversiConstants.BoardSize.boardWidth && col >= 0
-                        && oppositePlayer == currentBoard[row][col]) {
-                    row += horInterval;
-                    col += verInterval;
-                }
-                if (row < ReversiConstants.BoardSize.boardHeight && row >= 0 && col < ReversiConstants.BoardSize.boardWidth && col >= 0) {
-                    if ((row == i + horInterval && col == j + verInterval)
-                            || currentBoard[row][col] == 0){
-                        continue;
-                    }
-                    while (row != i || col != j) {
-                        row -= horInterval;
-                        col -= verInterval;
-                        optionalBoard[row][col] = (byte) (bCurrentPlayerIsBlack ? 2 : 1);
-                    }
-                }
-            }
-        }
-    }
-
-    private static byte[][] deepCopyMatrix(byte[][] currentBoard) {
-        if (currentBoard == null)
-            return null;
-        byte[][] result = new byte[currentBoard.length][];
-        for (int r = 0; r < currentBoard.length; r++) {
-            result[r] = currentBoard[r].clone();
-        }
-        return result;
-    }
-
     /** will return true if current moves are available **/
     private boolean validateMove(ReversiBoardState state) {
         nextAvailableMovesList.clear();
-        nextAvailableMovesList = getAvailableMoves(state);
+        nextAvailableMovesList = utils.allResults(state);
         return nextAvailableMovesList.size() > 0;
     }
 
     private void endGameLogic() {
-        if (gameOver == false) {
-            this.gameOver = true;
-            gameGUI.gameIsOver();
-//            System.exit(0);
-        }
+        this.gameOver = true;
+        gameGUI.gameIsOver();
     }
 
     private void changeOnlyPlayer() {
