@@ -205,6 +205,7 @@ public class GameGUI extends JFrame{
         strRes += gameLogic.getGameSum();
         JOptionPane.showMessageDialog(null, "Game Is Over, " + strRes);
         this.setVisible(false);
+        parent.pack();
         parent.setVisible(true);
         this.dispose();
     }

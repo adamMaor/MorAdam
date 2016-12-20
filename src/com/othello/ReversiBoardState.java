@@ -12,7 +12,6 @@ public class ReversiBoardState {
         this.bIsBlackMove = bIsBlackMove;
     }
 
-
     @Override
     public int hashCode() {
         CRC32 crc = new CRC32();
@@ -42,7 +41,6 @@ public class ReversiBoardState {
             return true;
         }
         return false;
-
     }
 
     @Override
